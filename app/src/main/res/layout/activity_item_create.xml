@@ -1,0 +1,138 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="co.share.share.ItemCreateActivity"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_main"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar_secondary"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/actionbar_association_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="28dp"
+                android:hint="Title"
+                android:id="@+id/item_title" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:hint="Description"
+                android:lines="3"
+                android:ems="10"
+                android:id="@+id/item_description" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/item_image"
+        android:layout_width="@dimen/fab_size_small"
+        android:layout_height="@dimen/fab_size_small"
+        android:src="@drawable/ic_image"
+        app:border_width="1dp"
+        app:border_color="@color/color_accent"
+        android:layout_alignTop="@id/toolbar_secondary"
+        android:layout_marginTop="7dp"
+        android:layout_marginLeft="8dp"/>
+
+
+    <co.share.share.views.FloatingActionButton
+        android:id="@+id/fab_image"
+        android:layout_width="@dimen/fab_size_small"
+        android:layout_height="@dimen/fab_size_small"
+        android:elevation="@dimen/fab_elevation"
+        android:background="@drawable/fab_background"
+        android:stateListAnimator="@animator/fab_anim"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBottom="@id/toolbar_secondary"
+        android:layout_marginBottom="-20dp"
+        android:layout_marginLeft="8dp">
+
+        <ImageView
+            android:layout_width="@dimen/fab_icon_size"
+            android:layout_height="@dimen/fab_icon_size"
+            android:src="@drawable/ic_camera"
+            android:layout_gravity="center"
+            android:duplicateParentState="true"/>
+
+    </co.share.share.views.FloatingActionButton>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/actionbar_association_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:id="@+id/content"
+            android:layout_below="@id/toolbar_secondary">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Condition"
+                android:id="@+id/condition" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_condition"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="More options"
+                android:id="@+id/test" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!--Button
+        android:layout_width="128dp"
+        android:layout_height="32dp"
+        android:background="@drawable/rippledrawable"
+        android:textColor="#fff"
+        android:elevation="2dp"
+        android:textSize="20dp"
+        android:text="Date Thing"/-->
+
+
+</LinearLayout>
