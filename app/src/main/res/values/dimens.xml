@@ -8,4 +8,37 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_small">40dp</dimen>
     <dimen name="fab_icon_size">24dp</dimen>
+    <dimen name="headerbar_elevation">4dp</dimen>
+
+
+    <!-- Keylines -->
+    <dimen name="keyline_1">16dp</dimen>
+    <dimen name="keyline_1_minus_8dp">8dp</dimen>
+    <dimen name="keyline_2">72dp</dimen>
+    <dimen name="keyline_2_minus_16dp">56dp</dimen>
+    <dimen name="keyline_2_item_detail">@dimen/keyline_2</dimen>
+
+    <!-- body content -->
+    <dimen name="element_spacing_normal">8dp</dimen>
+    <dimen name="content_padding_normal">16dp</dimen>
+    <dimen name="text_size_xsmall">11sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_xlarge">20sp</dimen>
+    <dimen name="text_size_diff_large_small">6sp</dimen>
+    <dimen name="speaker_image_size">40dp</dimen>
+
+    <!-- item dimens -->
+    <dimen name="item_detail_speaker_left_offset">@dimen/keyline_1</dimen>
+    <dimen name="item_detail_max_header_elevation">@dimen/headerbar_elevation</dimen>
+    <dimen name="browse_items_anim_amount">400dp</dimen>
+    <dimen name="item_details_floating_width">500dp</dimen>
+    <dimen name="item_details_floating_height">650dp</dimen>
+    <dimen name="item_details_extra_space_bottom">48dp</dimen>
+
+
+    <color name="color_background">#FFFFFF</color>
+    <color name="color_text">#333333</color>
+    <color name="color_text_dark">#000000</color>
 </resources>

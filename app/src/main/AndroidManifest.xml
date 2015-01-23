@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.share.share" >
 
-    <uses-feature android:name="android.hardware.camera"
-    android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -22,6 +23,14 @@
         <activity
             android:name=".ItemCreateActivity"
             android:label="@string/title_activity_item_create"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="co.share.share.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ItemDetailActivity"
+            android:label="@string/title_activity_item_detail"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

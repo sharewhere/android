@@ -17,6 +17,7 @@ import co.share.share.views.FloatingActionButton;
 public class ItemCreateActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    Bitmap mBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +50,15 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_create:
+                Intent i = new Intent(this, ItemDetailActivity.class);
+                i.putExtra("data", mBitmap);
+                startActivity(i);
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -77,10 +82,10 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mBitmap = (Bitmap) extras.get("data");
 
             ImageView mImageView = (ImageView) findViewById(R.id.item_image);
-            mImageView.setImageBitmap(imageBitmap);
+            mImageView.setImageBitmap(mBitmap);
         }
     }
 }

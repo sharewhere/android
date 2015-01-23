@@ -12,12 +12,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 
 import co.share.share.util.ItemAdapter;
 import co.share.share.views.FloatingActionButton;
 
 
-public class MainActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener{
+public class MainActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener {
     private final String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -48,6 +51,7 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
+
 
         // use a linear layout manager
         mLayoutManager = new GridLayoutManager(this, SPAN_COUNT);
@@ -111,6 +115,14 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
                 break;
             default:
                 break;
+        }
+    }
+
+
+    private class ActiveItemClickListener implements AbsListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         }
     }
 }

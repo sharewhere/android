@@ -1,0 +1,64 @@
+<co.share.share.views.NotifyScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notify_scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background">
+
+    <FrameLayout
+        android:clipChildren="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Image Layout -->
+        <FrameLayout
+            android:id="@+id/image_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/app_name" />
+
+        </FrameLayout>
+
+        <!-- Content Layout -->
+        <LinearLayout
+            android:id="@+id/content_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/color_background">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/loerm"
+                android:textColor="@color/color_text"
+                android:id="@+id/content_textview"
+                android:layout_marginTop="@dimen/keyline_1_minus_8dp"
+                android:layout_marginLeft="@dimen/keyline_2"
+                android:layout_marginRight="@dimen/keyline_1_minus_8dp"/>
+
+        </LinearLayout>
+
+        <!-- Toolbar Layout -->
+        <LinearLayout
+            android:id="@+id/toolbar_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:background="@color/color_primary">
+
+            <include layout="@layout/toolbar_main" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</co.share.share.views.NotifyScrollView>
