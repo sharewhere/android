@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import co.share.share.views.FloatingActionButton;
@@ -18,6 +19,7 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Bitmap mBitmap;
+    EditText mItemTitleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,8 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
+
+        mItemTitleText = (EditText) findViewById(R.id.item_title);
 
         // floating action button
         FloatingActionButton fab_image= (FloatingActionButton) findViewById(R.id.fab_image);
@@ -56,6 +60,7 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
             case R.id.action_create:
                 Intent i = new Intent(this, ItemDetailActivity.class);
                 i.putExtra("data", mBitmap);
+                i.putExtra("title", mItemTitleText.getText().toString());
                 startActivity(i);
                 return true;
         }

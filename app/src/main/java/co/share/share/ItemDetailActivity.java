@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import co.share.share.views.FloatingActionButton;
 import co.share.share.views.NotifyScrollView;
 
 
@@ -29,6 +30,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
     private LinearLayout mToolbarLinearLayout;
     private Toolbar mToolbar;
+    private FloatingActionButton mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +47,15 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
         mToolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbar_linear_layout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        setSupportActionBar(mToolbar);
+
+        //mButton = (FloatingActionButton) findViewById(R.id.borrow);
 
         Bitmap b = (Bitmap) getIntent().getExtras().get("data");
+        String title = getIntent().getExtras().getString("title");
 
         mImageView.setImageBitmap(b);
+        getSupportActionBar().setTitle(title);
 
         // more setup
         setupNotifyScrollView();
@@ -117,6 +124,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         } else {
             ViewCompat.setTranslationY(mToolbarLinearLayout, newY);
             ViewCompat.setTranslationY(mImageFrameLayout, scrollY * 0.5f);
+            ViewCompat.setTranslationY(mButton, newY);
         }
     }
 
