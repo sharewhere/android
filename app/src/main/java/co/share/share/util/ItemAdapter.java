@@ -1,16 +1,20 @@
 package co.share.share.util;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import co.share.share.R;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
+    private Context mContext;
     private String[] mDataset;
 
     // Provide a reference to the views for each data item
@@ -19,9 +23,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView mTextView;
+        public ImageView mImageView;
         public ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.item_text);
+            mImageView = (ImageView) v.findViewById(R.id.list_item_image);
         }
 
         @Override
@@ -53,6 +59,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset[position]);
+        holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
 
     }
 

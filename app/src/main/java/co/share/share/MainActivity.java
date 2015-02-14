@@ -26,7 +26,7 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SearchView mSearchView;
-    private static final int SPAN_COUNT = 3; // num columns in grid
+    private static final int SPAN_COUNT = 2; // num columns in grid
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
