@@ -34,6 +34,8 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
 
         // Set up action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
