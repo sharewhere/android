@@ -59,6 +59,26 @@
 
         </LinearLayout>
 
+        <!--co.share.share.views.FloatingActionButton
+            android:id="@+id/borrow"
+            android:layout_width="@dimen/fab_size_small"
+            android:layout_height="@dimen/fab_size_small"
+            android:elevation="@dimen/fab_elevation"
+            android:background="@drawable/fab_background"
+            android:stateListAnimator="@animator/fab_anim"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/keyline_1_minus_8dp"
+            android:layout_marginBottom="-60dp">
+
+            <ImageView
+                android:layout_width="@dimen/fab_icon_size"
+                android:layout_height="@dimen/fab_icon_size"
+                android:src="@drawable/fab_icons"
+                android:layout_gravity="center"
+                android:duplicateParentState="true"/>
+
+        </co.share.share.views.FloatingActionButton-->
+
     </FrameLayout>
 
 </co.share.share.views.NotifyScrollView>
