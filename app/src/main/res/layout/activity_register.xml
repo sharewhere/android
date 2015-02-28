@@ -1,22 +1,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:gravity="center_horizontal"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context="co.share.share.LoginActivity">
+    tools:context="co.share.share.RegisterActivity">
 
     <!-- Include actionbar toolbar -->
     <include layout="@layout/toolbar_main"/>
 
-    <!-- Login progress -->
-    <ProgressBar android:id="@+id/login_progress" style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp" android:visibility="gone" />
-
-    <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
+    <ScrollView android:id="@+id/register_form"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/keyline_1_minus_8dp">
 
-        <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
+        <LinearLayout android:id="@+id/email_register_form" android:layout_width="match_parent"
             android:layout_height="wrap_content" android:orientation="vertical">
 
             <AutoCompleteTextView android:id="@+id/email" android:layout_width="match_parent"
@@ -31,25 +29,21 @@
                 android:imeOptions="actionUnspecified" android:inputType="textPassword"
                 android:maxLines="1" android:singleLine="true" />
 
-            <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_zip"/>
+
+            <Button android:id="@+id/email_register_button" style="?android:textAppearanceSmall"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" android:text="@string/action_sign_in"
+                android:layout_marginTop="16dp" android:text="@string/action_register"
                 android:textStyle="bold"
                 />
 
-            <Button
-                android:id="@+id/register_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Register"
-                android:textColor="@color/color_primary"
-                style="?android:attr/borderlessButtonStyle"
-                />
+
 
         </LinearLayout>
     </ScrollView>
 
+
 </LinearLayout>
-
-
-
