@@ -11,7 +11,7 @@ import com.loopj.android.http.RequestParams;
 
 public class NetworkService {
 
-    public final static String baseURL = "http://104.211.1.47"; // XXX: HTTPS PLEASE
+    public final static String baseURL = "http://hernan.de:8000"; // XXX: HTTPS PLEASE
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static void get(String rel, RequestParams param, AsyncHttpResponseHandler handler) {

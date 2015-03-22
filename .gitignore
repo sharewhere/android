@@ -1,6 +1,9 @@
 .DS_Store
 MakerFaireOrlando/app/app.iml
 
+# Android Studio nav editor tree
+.navigation
+
 #built application files
 *.apk
 *.ap_
