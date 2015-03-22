@@ -3,9 +3,7 @@ package co.share.share;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -28,6 +26,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
@@ -101,20 +100,28 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
                 params.put("username", username);
                 params.put("password", password);
 
+                showProgress(true);
+
                 NetworkService.post("/login", params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
                         try {
                             Boolean text = resp.getBoolean("success");
+                            finish();
                             System.out.println(text);
                         } catch(JSONException exp) {
                             System.out.println("Failure!");
                         }
+                        showProgress(false);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResp) {
                         System.out.println("Failure! Code: " + statusCode);
+                        Toast failToast = Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_SHORT);
+                        failToast.show();
+                        finish();
+                        showProgress(false);
                     }
                 });
             }

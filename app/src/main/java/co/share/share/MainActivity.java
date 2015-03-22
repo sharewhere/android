@@ -3,6 +3,7 @@ package co.share.share;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import co.share.share.util.ItemAdapter;
 import co.share.share.views.FloatingActionButton;
@@ -41,11 +45,18 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.color_primary_dark));
 
         // floating action button
         FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab_1);
         fab1.setOnCheckedChangeListener(this);
 
+        ListView mDrawerList = (ListView) findViewById(R.id.drawer_list);
+        String[] values = {"Browse", "Share", "Borrow", "Requested"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        mDrawerList.setAdapter(adapter);
 
         // set up recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.item_view);
