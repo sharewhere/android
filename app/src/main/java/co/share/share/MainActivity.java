@@ -1,7 +1,6 @@
 package co.share.share;
 
 import android.content.Intent;
-import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -10,7 +9,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,13 +16,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import co.share.share.util.ItemAdapter;
-import co.share.share.views.FloatingActionButton;
 
-
-public class MainActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener {
+public class MainActivity extends ActionBarActivity {
     private final String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -49,8 +44,13 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.color_primary_dark));
 
         // floating action button
-        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab_1);
-        fab1.setOnCheckedChangeListener(this);
+        findViewById(R.id.action_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
+                startActivity(intent);
+            }
+        });
 
         ListView mDrawerList = (ListView) findViewById(R.id.drawer_list);
         String[] values = {"Browse", "Share", "Borrow", "Requested"};
@@ -109,28 +109,6 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
-        // When a FAB is toggled, log the action.
-        switch (fabView.getId()){
-            case R.id.fab_1:
-                //Log.d(TAG, String.format("FAB 1 was %s.", isChecked ? "checked" : "unchecked"));
-                Intent intent = new Intent(this, ItemCreateActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.fab_image:
-                Log.i("fab", "so fab");
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
 
     private class ActiveItemClickListener implements AbsListView.OnItemClickListener {
         @Override
