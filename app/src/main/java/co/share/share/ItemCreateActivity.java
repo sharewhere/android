@@ -9,13 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import co.share.share.views.FloatingActionButton;
 
 
-public class ItemCreateActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener {
+public class ItemCreateActivity extends ActionBarActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Bitmap mBitmap;
@@ -35,8 +36,15 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
         mItemTitleText = (EditText) findViewById(R.id.item_title);
 
         // floating action button
-        FloatingActionButton fab_image= (FloatingActionButton) findViewById(R.id.fab_image);
-        fab_image.setOnCheckedChangeListener(this);
+        findViewById(R.id.action_add_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        });
     }
 
 
@@ -65,22 +73,6 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
-        // When a FAB is toggled, log the action.
-        switch (fabView.getId()){
-            case R.id.fab_image:
-                Log.i("fab", "so fab");
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
