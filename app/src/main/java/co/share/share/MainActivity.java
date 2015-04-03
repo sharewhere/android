@@ -22,12 +22,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.loopj.android.http.PersistentCookieStore;
 
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
-import co.share.share.net.NetworkService;
-import co.share.share.util.ItemAdapter;
 
 
 public class MainActivity extends ShareWhereActivity {
@@ -39,37 +36,23 @@ public class MainActivity extends ShareWhereActivity {
     private static final int SPAN_COUNT = 2; // num columns in grid
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
-
     @Override
     protected void onResume()
     {
         super.onResume();
 
         // check if we are still logged in!
-        // TODO: check network
         if(!isLoggedin())
-        {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
+            doLogin();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("MainActivity oncreate");
-
         // check to see if the cookie exists, otherwise login
         if(!isLoggedin())
-        {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
-        System.out.println("MainActivity continuing");
+            doLogin();
 
         setContentView(R.layout.activity_main);
 
@@ -125,6 +108,8 @@ public class MainActivity extends ShareWhereActivity {
 
         switch(id) {
             case R.id.action_settings:
+                return true;
+            case R.id.action_logout:
                 logout();
                 return true;
             case R.id.action_search:
@@ -133,6 +118,13 @@ public class MainActivity extends ShareWhereActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doLogin()
+    {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private class ActiveItemClickListener implements AbsListView.OnItemClickListener {
