@@ -31,6 +31,8 @@ import android.widget.Toast;
 import com.loopj.android.http.*;
 
 import org.apache.http.Header;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.protocol.HttpContext;
 import org.json.*;
 
 import java.util.ArrayList;
@@ -43,12 +45,7 @@ import co.share.share.util.ProgressSpinner;
 /**
  * A login screen that offers login via username/password.
  */
-public class LoginActivity extends ActionBarActivity {
-
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "tjlocal:foobar"
-    };
-
+public class LoginActivity extends ShareWhereActivity {
     // UI references.
     private EditText mUsernameView;
     private EditText mPasswordView;
@@ -61,11 +58,6 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        // Set up action bar
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        //setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle("Login");
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -109,7 +101,7 @@ public class LoginActivity extends ActionBarActivity {
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
-        String username = mUsernameView.getText().toString();
+        final String username = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         // Reset errors.
@@ -158,9 +150,22 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
                 try {
-                    Boolean text = resp.getBoolean("success");
-                    finish();
-                    System.out.println(text);
+                    Boolean state = resp.getBoolean("success");
+
+                    if(state) {
+                        // we are done logging in
+                        Toast failToast = Toast.makeText(getApplicationContext(), "Welcome " + username + "!", Toast.LENGTH_SHORT);
+                        failToast.show();
+
+                        // Restart the main activity with our new login
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        Toast failToast = Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_SHORT);
+                        failToast.show();
+                    }
                 } catch(JSONException exp) {
                     System.out.println("Failure!");
                 }
@@ -175,19 +180,12 @@ public class LoginActivity extends ActionBarActivity {
                 failToast.show();
 
                 mProgress.hide();
-                finish();
             }
         });
     }
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        ;
     }
 }
 

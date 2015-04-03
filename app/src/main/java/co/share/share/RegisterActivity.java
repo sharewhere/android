@@ -22,7 +22,7 @@ import co.share.share.net.NetworkService;
 import co.share.share.util.ProgressSpinner;
 
 
-public class RegisterActivity extends ActionBarActivity {
+public class RegisterActivity extends ShareWhereActivity {
 
 
     // UI references.
@@ -40,11 +40,6 @@ public class RegisterActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-        // Set up action bar
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        //setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle("Register");
 
         // Set up the register form.
         mUsernameView = (EditText) findViewById(R.id.username);

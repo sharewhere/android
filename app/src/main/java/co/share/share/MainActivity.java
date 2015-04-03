@@ -22,11 +22,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.loopj.android.http.PersistentCookieStore;
 
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
+import co.share.share.net.NetworkService;
+import co.share.share.util.ItemAdapter;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ShareWhereActivity {
     private final String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -37,11 +41,37 @@ public class MainActivity extends ActionBarActivity {
 
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // check if we are still logged in!
+        // TODO: check network
+        if(!isLoggedin())
+        {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        System.out.println("MainActivity oncreate");
+
+        // check to see if the cookie exists, otherwise login
+        if(!isLoggedin())
+        {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        System.out.println("MainActivity continuing");
+
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
 
         // Set up action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -76,8 +106,6 @@ public class MainActivity extends ActionBarActivity {
         mDrawerList.setAdapter(adapter);
 
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -97,6 +125,7 @@ public class MainActivity extends ActionBarActivity {
 
         switch(id) {
             case R.id.action_settings:
+                logout();
                 return true;
             case R.id.action_search:
                 mSearchView.setIconified(false);
