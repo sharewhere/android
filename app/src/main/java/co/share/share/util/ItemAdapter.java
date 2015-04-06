@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import co.share.share.R;
+import co.share.share.models.Shareable;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context mContext;
-    private String[] mDataset;
+    private List<Shareable>  mDataset;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -38,8 +41,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ItemAdapter(String[] myDataset) {
-        mDataset = myDataset;
+    public ItemAdapter(List<Shareable> list) {
+        mDataset = list;
     }
 
     // Create new views (invoked by the layout manager)
@@ -58,7 +61,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset[position]);
+        holder.mTextView.setText(mDataset.get(position).getShar_name());
         holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
 
     }
@@ -66,6 +69,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 }

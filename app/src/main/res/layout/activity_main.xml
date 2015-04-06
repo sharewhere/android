@@ -1,55 +1,41 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <!-- Include actionbar toolbar -->
-    <include layout="@layout/toolbar_main"/>
-
-    <!-- content view -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="match_parent">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/item_view"
-            android:scrollbars="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            <!-- Include actionbar toolbar -->
+            <include layout="@layout/toolbar_main"/>
 
-        <!--co.share.share.views.FloatingActionButton
-            android:id="@+id/fab_1"
-            android:layout_width="@dimen/fab_size"
-            android:layout_height="@dimen/fab_size"
-            android:elevation="@dimen/fab_elevation"
-            android:background="@drawable/fab_background"
-            android:stateListAnimator="@animator/fab_anim"
-            android:layout_gravity="center_horizontal"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="28dp"
-            >
+            <com.astuetz.PagerSlidingTabStrip
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                />
 
-            <ImageView
-                android:layout_width="@dimen/fab_icon_size"
-                android:layout_height="@dimen/fab_icon_size"
-                android:src="@drawable/fab_icons"
-                android:layout_gravity="center"
-                android:duplicateParentState="true"/>
-
-        </co.share.share.views.FloatingActionButton-->
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
 
+        </LinearLayout>
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/multiple_actions"
             android:layout_width="wrap_content"
@@ -57,10 +43,10 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            fab:fab_addButtonColorNormal="@color/white"
-            fab:fab_addButtonColorPressed="@color/white_pressed"
-            fab:fab_addButtonPlusIconColor="@color/half_black"
-            fab:fab_labelStyle="@style/menu_labels_style"
+            app:fab_addButtonColorNormal="@color/white"
+            app:fab_addButtonColorPressed="@color/white_pressed"
+            app:fab_addButtonPlusIconColor="@color/half_black"
+            app:fab_labelStyle="@style/menu_labels_style"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp">
@@ -69,22 +55,20 @@
                 android:id="@+id/action_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
-                fab:fab_title="Chat"
-                fab:fab_colorPressed="@color/white_pressed"/>
+                app:fab_colorNormal="@color/white"
+                app:fab_title="Request an Item"
+                app:fab_colorPressed="@color/white_pressed"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
-                fab:fab_title="Share an Item"
-                fab:fab_colorPressed="@color/white_pressed"/>
+                app:fab_colorNormal="@color/white"
+                app:fab_title="Offer an Item"
+                app:fab_colorPressed="@color/white_pressed"/>
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
     </RelativeLayout>
-</LinearLayout>
 
     <!-- drawer layout -->
     <LinearLayout

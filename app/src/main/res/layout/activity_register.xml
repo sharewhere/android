@@ -11,8 +11,8 @@
     <include layout="@layout/toolbar_main"/> -->
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
         android:id="@+id/imageView"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/sharewhere_logo"
