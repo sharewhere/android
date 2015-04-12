@@ -101,6 +101,7 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
                      Type listType = new TypeToken<List<Shareable>>(){}.getType();
                      offersList = gson.fromJson(offers.toString(), listType);
+                     //offersList.get(0).shar_pic_name
 
                      mAdapter = new ItemAdapter(offersList);
                      mRecyclerView.setAdapter(mAdapter);

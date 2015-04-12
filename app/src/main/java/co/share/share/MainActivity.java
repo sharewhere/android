@@ -22,6 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
@@ -53,6 +55,11 @@ public class MainActivity extends ShareWhereActivity {
         // check to see if the cookie exists, otherwise login
         if(!isLoggedin())
             doLogin();
+
+        // initialize image streaming
+        // Create global configuration and initialize ImageLoader with this config
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoader.getInstance().init(config);
 
         setContentView(R.layout.activity_main);
 

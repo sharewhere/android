@@ -36,6 +36,7 @@ public class ItemCreateActivity extends ActionBarActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Bitmap mBitmap;
     EditText mItemTitleText;
+    EditText mDescriptionText;
     Menu mOptionsMenu;
 
     @Override
@@ -50,6 +51,7 @@ public class ItemCreateActivity extends ActionBarActivity {
         getSupportActionBar().setTitle("");
 
         mItemTitleText = (EditText) findViewById(R.id.item_title);
+        mDescriptionText = (EditText) findViewById(R.id.item_description);
 
         // floating action button
         findViewById(R.id.action_add_image).setOnClickListener(new View.OnClickListener() {
@@ -118,6 +120,7 @@ public class ItemCreateActivity extends ActionBarActivity {
     private void createShareable()
     {
         final String shareable_name = mItemTitleText.getText().toString();
+        final String description = mDescriptionText.getText().toString();
 
         // Reset errors.
         mItemTitleText.setError(null);
@@ -129,6 +132,14 @@ public class ItemCreateActivity extends ActionBarActivity {
         if (TextUtils.isEmpty(shareable_name)) {
             mItemTitleText.setError(getString(R.string.error_invalid_sharable_name));
             focusView = mItemTitleText;
+            cancel = true;
+        }
+
+        // Check for a valid shareable description
+        if (TextUtils.isEmpty(description)) {
+            mDescriptionText.setError(getString(R.string.error_invalid_description));
+            if(focusView == null)
+                focusView = mItemTitleText;
             cancel = true;
         }
 
@@ -159,24 +170,26 @@ public class ItemCreateActivity extends ActionBarActivity {
 
         RequestParams params = new RequestParams();
         params.put("picture", new ByteArrayInputStream(output.toByteArray()));
-        params.put("title", shareable_name);
+        params.put("shar_name", shareable_name);
+        params.put("description", description);
 
-        NetworkService.post("/images", params, new TextHttpResponseHandler() {
+        NetworkService.post("/makeshareableoffer", params, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int code, Header [] lol, String response) {
-                Toast failToast = Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT);
-                failToast.show();
+                Log.d("ItemCreateActivity", response);
                 showProgress(false);
 
                 Intent i = new Intent(ItemCreateActivity.this, ItemDetailActivity.class);
                 i.putExtra("data", mBitmap);
                 i.putExtra("title", shareable_name);
+                i.putExtra("description", description);
                 startActivity(i);
+                finish();
             }
 
             @Override
             public void onFailure(int code, Header [] wow, String wat, Throwable e) {
-                Toast failToast = Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_SHORT);
+                Toast failToast = Toast.makeText(getApplicationContext(), "Failed to create sharable", Toast.LENGTH_LONG);
                 failToast.show();
                 showProgress(false);
             }

@@ -53,8 +53,10 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
         Bitmap b = (Bitmap) getIntent().getExtras().get("data");
         String title = getIntent().getExtras().getString("title");
+        String desc = getIntent().getExtras().getString("description");
 
         mImageView.setImageBitmap(b);
+        //findViewById(R.id.)
         getSupportActionBar().setTitle(title);
 
         // more setup

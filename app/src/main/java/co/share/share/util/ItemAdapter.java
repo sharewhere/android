@@ -11,10 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.List;
 
 import co.share.share.R;
 import co.share.share.models.Shareable;
+import co.share.share.net.NetworkService;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context mContext;
@@ -61,9 +64,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position).getShar_name());
-        holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
+        holder.mTextView.setText(mDataset.get(position).shar_name);
+        String pic = mDataset.get(position).shar_pic_name;
 
+        if(pic != null)
+            ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic), holder.mImageView);
+        else
+            holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

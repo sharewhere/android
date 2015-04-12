@@ -27,6 +27,11 @@ public class NetworkService {
         client.post(getAbsURL(rel), param, handler);
     }
 
+    public static String getImageURL(String imageName)
+    {
+        return getAbsURL("/images/" + imageName);
+    }
+
     private static String getAbsURL(String rel) {
         return baseURL + rel;
     }
