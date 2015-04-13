@@ -2,9 +2,11 @@ package co.share.share;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,8 +22,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ViewSwitcher;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -38,6 +42,9 @@ public class MainActivity extends ShareWhereActivity {
     private static final int SPAN_COUNT = 2; // num columns in grid
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private MediaPlayer mMediaPlayer;
+    private boolean mMlgActive;
+
     @Override
     protected void onResume()
     {
@@ -49,12 +56,24 @@ public class MainActivity extends ShareWhereActivity {
     }
 
     @Override
+    protected void onDestroy()
+    {
+        mMediaPlayer.release();
+        mMediaPlayer = null;
+
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // check to see if the cookie exists, otherwise login
         if(!isLoggedin())
             doLogin();
+
+        if(mMediaPlayer == null)
+            mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.spooky);
 
         // initialize image streaming
         // Create global configuration and initialize ImageLoader with this config
@@ -96,6 +115,7 @@ public class MainActivity extends ShareWhereActivity {
         mDrawerList.setAdapter(adapter);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -115,6 +135,7 @@ public class MainActivity extends ShareWhereActivity {
 
         switch(id) {
             case R.id.action_settings:
+                mlg_active();
                 return true;
             case R.id.action_logout:
                 logout();
@@ -125,6 +146,46 @@ public class MainActivity extends ShareWhereActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void mlg_active()
+    {
+        if(mMlgActive)
+            return;
+
+        mMlgActive = true;
+
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) pager.getAdapter();
+        final OffersFragment offers = (OffersFragment) a.instantiateItem(pager, 0);
+        final RequestsFragment req = (RequestsFragment) a.instantiateItem(pager, 1);
+
+        mlgSwitchViews(offers.getRecycler());
+        mlgSwitchViews(req.getRecycler());
+
+        mMediaPlayer.start();
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mlgSwitchViews(offers.getRecycler());
+                mlgSwitchViews(req.getRecycler());
+                mMlgActive = false;
+            }
+        });
+    }
+
+    private void mlgSwitchViews(RecyclerView recycler)
+    {
+        for(int i = 0; i < recycler.getChildCount(); i++) {
+            View v = recycler.getChildAt(i);
+
+            v = v.findViewById(R.id.list_item_switch);
+
+            if(v != null) {
+                ViewSwitcher sw = (ViewSwitcher)v;
+                sw.showNext();
+            }
+        }
     }
 
     private void doLogin()
@@ -141,7 +202,7 @@ public class MainActivity extends ShareWhereActivity {
         }
     }
 
-    public class PagerAdapter extends FragmentPagerAdapter {
+    public class PagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] TITLES = {"Offers", "Requests"};
 

@@ -87,6 +87,12 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
         return view;
     }
 
+    // for MLG
+    public RecyclerView getRecycler()
+    {
+        return mRecyclerView;
+    }
+
     public void getOffers() {
         mListViewContainer.setRefreshing(true);
         NetworkService.get("/browseoffers", null, new JsonHttpResponseHandler() {

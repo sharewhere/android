@@ -30,10 +30,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // each data item is just a string in this case
         public TextView mTextView;
         public ImageView mImageView;
+        public ImageView mImageViewMlg;
         public ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.item_text);
             mImageView = (ImageView) v.findViewById(R.id.list_item_image);
+            mImageViewMlg = (ImageView) v.findViewById(R.id.list_item_image_mlg);
         }
 
         @Override
@@ -71,6 +73,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic), holder.mImageView);
         else
             holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
+
+        holder.mImageViewMlg.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder_mlg));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

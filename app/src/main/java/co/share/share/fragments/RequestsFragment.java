@@ -78,13 +78,19 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
         mRecyclerView.setHasFixedSize(true);
 
 
-        // use a linear layout manager
+        // use a grid layout manager
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         getRequests();
 
         return view;
+    }
+
+    // for MLG
+    public RecyclerView getRecycler()
+    {
+        return mRecyclerView;
     }
 
     public void getRequests() {
