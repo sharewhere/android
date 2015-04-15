@@ -1,0 +1,3 @@
+[submodule "libs/android-floating-action-button"]
+	path = libs/android-floating-action-button
+	url = git@github.com:sharewhere/android-floating-action-button.git

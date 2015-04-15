@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':android-floating-action-button'
+include ':libs:android-floating-action-button:library'
