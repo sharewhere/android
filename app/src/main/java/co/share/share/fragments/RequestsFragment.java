@@ -109,7 +109,7 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
                     }.getType();
                     requestList = gson.fromJson(requests.toString(), listType);
 
-                    mAdapter = new ItemAdapter(requestList);
+                    mAdapter = new ItemAdapter(requestList, getActivity());
                     mRecyclerView.setAdapter(mAdapter);
 
                 } catch (JSONException e) {
@@ -129,4 +129,5 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         getRequests();
     }
+
 }

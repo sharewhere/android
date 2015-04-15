@@ -1,6 +1,7 @@
 package co.share.share.fragments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import co.share.share.ItemDetailActivity;
 import co.share.share.R;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
@@ -81,6 +83,14 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
         // use a linear layout manager
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent d = new Intent(getActivity(), ItemDetailActivity.class);
+                // put extras!
+                startActivity(d);
+            }
+        });
 
         getOffers();
 
@@ -109,7 +119,7 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
                      offersList = gson.fromJson(offers.toString(), listType);
                      //offersList.get(0).shar_pic_name
 
-                     mAdapter = new ItemAdapter(offersList);
+                     mAdapter = new ItemAdapter(offersList, getActivity());
                      mRecyclerView.setAdapter(mAdapter);
 
                  } catch (JSONException e) {

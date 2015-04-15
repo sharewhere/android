@@ -69,10 +69,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            android:layout_alignParentLeft="true"
+            fab:fab_colorNormal="@color/pink"
+            fab:fab_colorPressed="@color/pink_pressed"
+            fab:fab_icon="@drawable/ic_camera"
             android:layout_alignBottom="@id/toolbar_secondary"
-            android:layout_marginBottom="-20dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="-30dp"
             />
 
     <!--co.share.share.views.FloatingActionButton

@@ -43,9 +43,9 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            app:fab_addButtonColorNormal="@color/white"
-            app:fab_addButtonColorPressed="@color/white_pressed"
-            app:fab_addButtonPlusIconColor="@color/half_black"
+            app:fab_addButtonColorNormal="@color/pink"
+            app:fab_addButtonColorPressed="@color/pink_pressed"
+            app:fab_addButtonPlusIconColor="@color/white"
             app:fab_labelStyle="@style/menu_labels_style"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
@@ -55,17 +55,19 @@
                 android:id="@+id/action_a"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/white"
                 app:fab_title="Request an Item"
-                app:fab_colorPressed="@color/white_pressed"/>
+                app:fab_icon="@drawable/ic_request"
+                app:fab_colorNormal="@color/pink"
+                app:fab_colorPressed="@color/pink_pressed"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/white"
+                app:fab_colorNormal="@color/pink"
                 app:fab_title="Offer an Item"
-                app:fab_colorPressed="@color/white_pressed"/>
+                app:fab_icon="@drawable/ic_offer"
+                app:fab_colorPressed="@color/pink_pressed"/>
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </RelativeLayout>
