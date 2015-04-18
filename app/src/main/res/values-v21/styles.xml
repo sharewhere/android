@@ -1,6 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/color_primary</item>
@@ -9,23 +8,12 @@
         <!--item name="windowActionBar">false</item-->
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:alertDialogTheme">@style/Theme.AlertDialog</item>
+        <item name="android:datePickerDialogTheme">@style/Theme.DialogTheme</item>
     </style>
 
-    <style name="Theme.AlertDialog" parent="Theme.AppCompat.Light.Dialog">
+    <style name="Theme.DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
     </style>
-
-    <style name="Theme.DialogTheme" parent="@android:style/Widget.CalendarView">
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/color_accent</item>
-    </style>
-
-    <style name="menu_labels_style">
-        <item name="android:background">@drawable/fab_label_background</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
 </resources>

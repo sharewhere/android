@@ -1,12 +1,16 @@
 package co.share.share;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,22 +21,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import co.share.share.fragments.OffersFragment;
+import co.share.share.fragments.RequestsFragment;
 import co.share.share.net.NetworkService;
-import co.share.share.views.FloatingActionButton;
 import co.share.share.views.NotifyScrollView;
 
-
-public class ItemDetailActivity extends ActionBarActivity implements NotifyScrollView.Callback {
-
+public class ProfileActivity extends ActionBarActivity implements NotifyScrollView.Callback {
+    public static final String PROFILE_KEY = "PROFILE_KEY";
     private NotifyScrollView mNotifyScrollView;
 
     private FrameLayout mImageFrameLayout;
     private ImageView mImageView;
     private TextView mDescription;
-    private TextView mCreator;
 
     private LinearLayout mContentLinearLayout;
 
@@ -43,7 +48,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_detail);
+        setContentView(R.layout.activity_profile);
 
         // view matching
         mNotifyScrollView = (NotifyScrollView) findViewById(R.id.notify_scroll_view);
@@ -51,7 +56,6 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         mImageFrameLayout = (FrameLayout) findViewById(R.id.image_frame_layout);
         mImageView = (ImageView) findViewById(R.id.image_view);
         mDescription = (TextView) findViewById(R.id.description);
-        mCreator = (TextView) findViewById(R.id.creator);
 
         mContentLinearLayout = (LinearLayout) findViewById(R.id.content_linear_layout);
 
@@ -59,37 +63,24 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         mToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(mToolbar);
 
-        //mButton = (FloatingActionButton) findViewById(R.id.borrow);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 
-        if(getIntent().getExtras() != null) {
-            Bitmap b = (Bitmap) getIntent().getExtras().get("data");
-            if (b != null) /* TODO dont do it this way from the deal */
-                mImageView.setImageBitmap(b);
-            Bundle extras = getIntent().getExtras();
-            String name = extras.getString("shar_name");
-            String pic_name = extras.getString("shar_pic_name");
-            String desc = extras.getString("shar_desc");
-            String creator = extras.getString("shar_creator");
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setIndicatorColor(getResources().getColor(R.color.color_accent));
+        tabs.setTextColor(Color.WHITE);
+        tabs.setShouldExpand(true);
+        tabs.setViewPager(pager);
 
-            /* TODO Rework this so that I dont have to load placeholder initially */
-            mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
+        /*
+        *   TODO use placeholder only if user has not provided photo
+        *   query user profile from api here
+        */
+        mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
+        getSupportActionBar().setTitle("Placeholderman");
 
-            //ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic_name), mImageView);
-            if (pic_name != null && !pic_name.isEmpty()) {
-                ImageLoader.getInstance().loadImage(NetworkService.getImageURL(pic_name), new SimpleImageLoadingListener() {
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        // Do whatever you want with Bitmap
-                        mImageView.setImageBitmap(loadedImage);
-                    }
-                });
-            }
-            getSupportActionBar().setTitle(name);
-            mCreator.setText("Created by " + creator);
-            mDescription.setText(desc);
-        }
 
-        // more setup
         setupNotifyScrollView();
         setupToolbar();
 
@@ -181,5 +172,45 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public class PagerAdapter extends FragmentStatePagerAdapter {
+
+        private final String[] TITLES = {"My Offers", "My Requests"};
+
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if(position == 0) {
+                OffersFragment o = new OffersFragment();
+                Bundle args = new Bundle();
+                args.putBoolean(PROFILE_KEY, true);
+                o.setArguments(args);
+                return o;
+            }
+            else {
+                RequestsFragment r = new RequestsFragment();
+                Bundle args = new Bundle();
+                args.putBoolean(PROFILE_KEY, true);
+                r.setArguments(args);
+                return r;
+            }
+
+        }
+    }
+
 
 }

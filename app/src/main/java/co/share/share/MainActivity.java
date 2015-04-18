@@ -92,6 +92,8 @@ public class MainActivity extends ShareWhereActivity {
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setIndicatorColor(getResources().getColor(R.color.color_accent));
+        tabs.setIndicatorHeight(12);
+        tabs.setDividerColor(getResources().getColor(R.color.color_primary_dark));
         tabs.setTextColor(Color.WHITE);
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
@@ -100,10 +102,20 @@ public class MainActivity extends ShareWhereActivity {
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.color_primary_dark));
 
         // floating action button
-        findViewById(R.id.action_share).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.action_offer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
+                intent.putExtra(ItemCreateActivity.CREATE_TYPE, ItemCreateActivity.CreateType.OFFER);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.action_request).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
+                intent.putExtra(ItemCreateActivity.CREATE_TYPE, ItemCreateActivity.CreateType.REQUEST);
                 startActivity(intent);
             }
         });
@@ -143,6 +155,9 @@ public class MainActivity extends ShareWhereActivity {
             case R.id.action_search:
                 mSearchView.setIconified(false);
                 return true;
+            case R.id.action_profile:
+                Intent i = new Intent(this, ProfileActivity.class);
+                startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);

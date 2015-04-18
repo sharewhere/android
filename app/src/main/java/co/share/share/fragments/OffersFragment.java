@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import co.share.share.ItemDetailActivity;
+import co.share.share.ProfileActivity;
 import co.share.share.R;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
@@ -40,6 +41,10 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private SwipeRefreshLayout mListViewContainer;
     Gson gson = new Gson();
+    private boolean userProfile;
+
+    public OffersFragment() {
+    }
 
     public static OffersFragment newInstance(int index) {
         OffersFragment f = new OffersFragment();
@@ -58,6 +63,10 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
             return null;
         }
         final View view = inflater.inflate(R.layout.fragment_offers, container, false);
+
+        Bundle args = getArguments();
+        if (args != null)
+            userProfile = args.getBoolean(ProfileActivity.PROFILE_KEY);
 
         mListViewContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
 
@@ -105,7 +114,7 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     public void getOffers() {
         mListViewContainer.setRefreshing(true);
-        NetworkService.get("/browseoffers", null, new JsonHttpResponseHandler() {
+        NetworkService.get(userProfile?"/offers":"/browseoffers", null, new JsonHttpResponseHandler() {
              @Override
              public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
                  try {
@@ -117,7 +126,6 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
                      Type listType = new TypeToken<List<Shareable>>(){}.getType();
                      offersList = gson.fromJson(offers.toString(), listType);
-                     //offersList.get(0).shar_pic_name
 
                      mAdapter = new ItemAdapter(offersList, getActivity());
                      mRecyclerView.setAdapter(mAdapter);

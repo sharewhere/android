@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import co.share.share.ProfileActivity;
 import co.share.share.R;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
@@ -33,11 +34,13 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private static final int SPAN_COUNT = 2; // num columns in grid
+    private boolean userProfile;
 
     private SwipeRefreshLayout mListViewContainer;
 
     private List<Shareable> requestList;
     Gson gson = new Gson();
+
 
     public static RequestsFragment newInstance(int index) {
         RequestsFragment f = new RequestsFragment();
@@ -56,6 +59,11 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
             return null;
         }
         final View view = inflater.inflate(R.layout.fragment_requests, container, false);
+
+        // get args
+        Bundle args = getArguments();
+        if (args != null)
+            userProfile = args.getBoolean(ProfileActivity.PROFILE_KEY);
 
         mListViewContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
 
@@ -95,7 +103,7 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     public void getRequests() {
         mListViewContainer.setRefreshing(true);
-        NetworkService.get("/browserequests", null, new JsonHttpResponseHandler() {
+        NetworkService.get(userProfile?"/requests":"/browserequests", null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
                 try {

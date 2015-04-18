@@ -110,6 +110,67 @@
             android:layout_below="@id/toolbar_secondary">
 
 
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/start_date_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="start date"
+                    android:textColor="@color/color_text"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="false"
+                    android:layout_alignParentEnd="false"
+                    android:layout_alignParentStart="true"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Start Date"
+                    android:layout_marginLeft="@dimen/keyline_1_minus_8dp"
+                    android:layout_gravity="end"
+                    android:id="@+id/start_date"
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/end_date_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="end date"
+                    android:textColor="@color/color_text"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="false"
+                    android:layout_alignParentEnd="false"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="End Date"
+                    android:layout_marginLeft="@dimen/keyline_1_minus_8dp"
+                    android:id="@+id/end_date"
+                    android:layout_marginRight="@dimen/keyline_1_minus_8dp"
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <!--
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -134,6 +195,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText"/>
+
+-->
+
 
 
         </LinearLayout>
