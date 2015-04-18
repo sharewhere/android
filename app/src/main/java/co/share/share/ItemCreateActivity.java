@@ -28,7 +28,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
@@ -172,10 +174,29 @@ public class ItemCreateActivity extends ShareWhereActivity {
         }
     }
 
+    private String convertToServerDate(String input)
+    {
+        // parse the date fields if any
+        SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
+        Date testDate = null;
+        try {
+            testDate = sdf.parse(input);
+        } catch(Exception ex){
+            Log.wtf(this.getClass().getSimpleName(), "Failed to parse the input date");
+            return "";
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+        String newFormat = formatter.format(testDate);
+
+        return newFormat;
+    }
+
     private void createShareable()
     {
         final String shareable_name = mItemTitleText.getText().toString();
         final String description = mDescriptionText.getText().toString();
+        String startDate = mStartDateText.getText().toString();
+        String endDate = mEndDateText.getText().toString();
 
         // Reset errors.
         mItemTitleText.setError(null);
@@ -210,12 +231,19 @@ public class ItemCreateActivity extends ShareWhereActivity {
             cancel = true;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            if(focusView != null)
-                focusView.requestFocus();
-            return;
+        RequestParams params = new RequestParams();
+
+        // parse the date fields if any
+        if(!TextUtils.isEmpty(startDate))
+        {
+            startDate = convertToServerDate(startDate);
+            params.put("start_date", startDate);
+        }
+
+        if(!TextUtils.isEmpty(endDate))
+        {
+            endDate = convertToServerDate(endDate);
+            params.put("end_date", endDate);
         }
 
         showProgress(true);
@@ -223,7 +251,6 @@ public class ItemCreateActivity extends ShareWhereActivity {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
 
-        RequestParams params = new RequestParams();
         params.put("picture", new ByteArrayInputStream(output.toByteArray()));
         params.put("shar_name", shareable_name);
         params.put("description", description);
