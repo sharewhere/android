@@ -113,7 +113,23 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
         /* set up button to do a deal based on the current deal */
         if (mSharable != null) {
-            // get req
+
+
+            /* Tells us if offer or request */
+            switch (mSharable.state_name) {
+            case Constants.REQ:
+            case Constants.REQ_OFR:
+                Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS A REQUEST");
+                mButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_offer));
+                mButton.setOnClickListener(offerClickListener);
+                break;
+            case Constants.OFR:
+            case Constants.OFR_REQ:
+                Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS AN OFFER");
+                mButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_request));
+                mButton.setOnClickListener(requestClickListener);
+                break;
+            }
 
             NetworkService.get("/viewreqoffshareable?shar_id=" + mSharable.shar_id, null, new ShareWhereRespHandler() {
                 @Override
@@ -130,9 +146,8 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                         //JSONObject shar = resp.getJSONObject("shareable");
                         //Shareable s = gson.fromJson(shar.toString(), Shareable.class);
 
-                        // Created by user if list
+                        // Created by user if list other user otherwise
                         didUserCreate = resp.has("transactions");
-
 
                         if (!resp.isNull("transactions")) {
                             JSONArray ts = resp.getJSONArray("transactions");
@@ -140,50 +155,33 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                             }.getType();
                             List<Transaction> mTransactions = gson.fromJson(ts.toString(), listType);
                         }
-                        // created by someone else if single deal
                         else if (!resp.isNull("transaction")) {
                             JSONObject transaction = resp.getJSONObject("transaction");
-                            shouldDisableAction = true;
                             Transaction t = gson.fromJson(transaction.toString(), Transaction.class);
-                        } else {
-                            // user viewed other persons deal but hasnt acted on it
+                            shouldDisableAction = true;
                         }
 
                     } catch (JSONException e) {
                         Log.wtf(this.getClass().getSimpleName(), "JSON Exception at viewoffreq");
                     }
-                }
 
+                    // We only know this after we have loaded the network deal :o
+                    Log.i(ItemDetailActivity.class.getSimpleName(), didUserCreate?"ICREATEDTHIS":"SOMEONEELSEDIDTHIS");
+
+                    if (didUserCreate) {
+                        mButton.setVisibility(View.GONE);
+                    }
+
+                    if (shouldDisableAction) {
+                        mButton.setEnabled(false);
+                    }
+                }
                 @Override
                 public void onFinish() {
-                    Log.i(ItemDetailActivity.class.getSimpleName(), didUserCreate?"ICREATEDTHIS":"SOMEONEELSEDIDTHIS");
                 }
 
             });
-
-
-
-            switch (mSharable.state_name) {
-            case Constants.REQ:
-            case Constants.REQ_OFR:
-                Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS A REQUEST");
-                mButton.setOnClickListener(offerClickListener);
-                break;
-            case Constants.OFR:
-            case Constants.OFR_REQ:
-                Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS AN OFFER");
-                mButton.setOnClickListener(requestClickListener);
-                break;
-            }
-
-
-
-            if (shouldDisableAction) {
-                mButton.setColorDisabledResId(R.color.color_text);
-                mButton.setVisibility(View.GONE);
-            }
         }
-
 
         // more setup
         setupNotifyScrollView();
@@ -197,13 +195,12 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         public void onClick(View v) {
             // show modal with thing
             RequestParams params = new RequestParams();
-            params.add(Constants.SHAR_ID, "" + mSharable.shar_id);
-            params.add("description", "I'll decide later");
+            params.add("shar_id", "" + mSharable.shar_id);
+            //params.add("description", "I'll decide later");
 
             NetworkService.post("/offeronrequest", params, new ShareWhereRespHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                    super.onSuccess(statusCode, headers, responseString);
                 }
             });
 
@@ -216,12 +213,11 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         public void onClick(View v) {
             RequestParams params = new RequestParams();
             params.add(Constants.SHAR_ID, "" + mSharable.shar_id);
-            params.add("description", "I'll decide later");
+            //params.add("description", "I'll decide later");
 
             NetworkService.post("/requestonoffer", params, new ShareWhereRespHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                    super.onSuccess(statusCode, headers, responseString);
                 }
             });
         }
@@ -312,6 +308,10 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showTransactionList() {
+
     }
 
 }
