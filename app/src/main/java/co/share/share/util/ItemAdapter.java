@@ -3,6 +3,7 @@ package co.share.share.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
+import co.share.share.ItemDetailActivity;
 import co.share.share.R;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
@@ -22,18 +24,34 @@ import co.share.share.net.NetworkService;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context mContext;
     private List<Shareable>  mDataset;
+    private View.OnClickListener clickListener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
+        public CardView mCardView;
         public TextView mTextView;
         public ImageView mImageView;
         public ImageView mImageViewMlg;
         public ViewHolder(View v) {
             super(v);
+            mCardView = (CardView) v.findViewById(R.id.card_view);
+            mCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getPosition();
+                    Shareable s = mDataset.get(pos);
+                    Intent d = new Intent(mContext, ItemDetailActivity.class);
+                    d.putExtra("shar_name", s.shar_name);
+                    d.putExtra("shar_pic_name", s.shar_pic_name);
+                    d.putExtra("shar_desc", s.description);
+                    mContext.startActivity(d);
+                }
+            });
             mTextView = (TextView) v.findViewById(R.id.item_text);
+            mTextView.setSelected(true);
             mImageView = (ImageView) v.findViewById(R.id.list_item_image);
             mImageViewMlg = (ImageView) v.findViewById(R.id.list_item_image_mlg);
         }
@@ -42,12 +60,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         public void onClick(View view) {
             Log.d("yay", "onClick " + getPosition() + " ");
         }
-
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ItemAdapter(List<Shareable> list) {
+    public ItemAdapter(List<Shareable> list, Context context) {
         mDataset = list;
+        mContext = context;
+    //    this.clickListener = clickListener;
+
     }
 
     // Create new views (invoked by the layout manager)

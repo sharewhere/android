@@ -6,6 +6,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +15,12 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
+import co.share.share.net.NetworkService;
 import co.share.share.views.FloatingActionButton;
 import co.share.share.views.NotifyScrollView;
 
@@ -25,6 +31,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
     private FrameLayout mImageFrameLayout;
     private ImageView mImageView;
+    private TextView mDescription;
 
     private LinearLayout mContentLinearLayout;
 
@@ -42,6 +49,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
         mImageFrameLayout = (FrameLayout) findViewById(R.id.image_frame_layout);
         mImageView = (ImageView) findViewById(R.id.image_view);
+        mDescription = (TextView) findViewById(R.id.description);
 
         mContentLinearLayout = (LinearLayout) findViewById(R.id.content_linear_layout);
 
@@ -51,13 +59,30 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
         //mButton = (FloatingActionButton) findViewById(R.id.borrow);
 
-        Bitmap b = (Bitmap) getIntent().getExtras().get("data");
-        String title = getIntent().getExtras().getString("title");
-        String desc = getIntent().getExtras().getString("description");
+        if(getIntent().getExtras() != null) {
+            Bitmap b = (Bitmap) getIntent().getExtras().get("data");
+            if (b != null) /* TODO dont do it this way from the deal */
+                mImageView.setImageBitmap(b);
+            String name = getIntent().getExtras().getString("shar_name");
+            String pic_name = getIntent().getExtras().getString("shar_pic_name");
+            String desc = getIntent().getExtras().getString("shar_desc");
 
-        mImageView.setImageBitmap(b);
-        //findViewById(R.id.)
-        getSupportActionBar().setTitle(title);
+            /* TODO Rework this so that I dont have to load placeholder initially */
+            mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
+
+            //ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic_name), mImageView);
+            if (pic_name != null && !pic_name.isEmpty()) {
+                ImageLoader.getInstance().loadImage(NetworkService.getImageURL(pic_name), new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        // Do whatever you want with Bitmap
+                        mImageView.setImageBitmap(loadedImage);
+                    }
+                });
+            }
+            getSupportActionBar().setTitle(name);
+            mDescription.setText(desc);
+        }
 
         // more setup
         setupNotifyScrollView();
