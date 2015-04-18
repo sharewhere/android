@@ -1,9 +1,8 @@
 package co.share.share;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -140,8 +139,6 @@ public class RegisterActivity extends ShareWhereActivity {
         params.put("zipcode", zipcode);
         params.put("email_address", email);
 
-        //showProgress(true);
-
         NetworkService.post("/register", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
@@ -153,19 +150,18 @@ public class RegisterActivity extends ShareWhereActivity {
 
                     finish();
                 } catch (JSONException exp) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Failed to code JSON", Toast.LENGTH_SHORT);
-                    toast.show();
+                    Log.d(this.getClass().getSimpleName(), "Failed to register  " + statusCode);
                 }
-
-                mProgress.hide();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResp) {
-                System.out.println("Failure! Code: " + statusCode);
-                Toast failToast = Toast.makeText(getApplicationContext(), "Registration failed", Toast.LENGTH_SHORT);
-                failToast.show();
+                Log.d(this.getClass().getSimpleName(), "Failure! Code: " + statusCode);
+            }
 
+            @Override
+            public void onFinish()
+            {
                 mProgress.hide();
             }
         });
