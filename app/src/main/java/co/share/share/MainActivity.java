@@ -76,8 +76,10 @@ public class MainActivity extends ShareWhereActivity {
 
         // initialize image streaming
         // Create global configuration and initialize ImageLoader with this config
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-        ImageLoader.getInstance().init(config);
+        if(!ImageLoader.getInstance().isInited()) {
+             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+             ImageLoader.getInstance().init(config);
+        }
 
         setContentView(R.layout.activity_main);
 

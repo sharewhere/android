@@ -10,6 +10,8 @@ public class Shareable {
     public String shar_pic_name;
     public String zip_code;
     public String state_name;
+    public String start_date;
+    public String end_date;
     public int state_id;
 
     /*
