@@ -4,6 +4,9 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -28,6 +31,10 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,14 +49,22 @@ import co.share.share.views.FloatingActionButton;
 public class ItemCreateActivity extends ShareWhereActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final String UPLOAD_FILE_NAME = "upload.jpg";
+
     Context mContext;
-    Bitmap mBitmap;
+
+    ImageView mImageView;
     EditText mItemTitleText;
     EditText mDescriptionText;
     TextView mStartDateText;
     TextView mEndDateText;
     Menu mOptionsMenu;
-    private CreateType mCreateType;
+    CreateType mCreateType;
+
+    // image handling
+    Bitmap mBitmapThumbnail;
+    File mImageFile;
+    String mCurrentImagePath;
 
     public static final String CREATE_TYPE = "CREATE_TYPE";
 
@@ -77,14 +92,30 @@ public class ItemCreateActivity extends ShareWhereActivity {
         mDescriptionText = (EditText) findViewById(R.id.item_description);
         mStartDateText = (TextView) findViewById(R.id.start_date);
         mEndDateText = (TextView) findViewById(R.id.end_date);
+        mImageView = (ImageView) findViewById(R.id.item_image);
 
         // floating action button
         findViewById(R.id.action_add_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                resetImage();
+
+                try {
+                    mImageFile = createImageFile();
+                } catch (IOException e) {
+                    Log.wtf(this.getClass().getSimpleName(), "Failed to create picture file");
+                    return;
+                }
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mImageFile));
+
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+                else {
+                    resetImage();
                 }
             }
 
@@ -151,13 +182,22 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            mBitmap = (Bitmap) extras.get("data");
-
-            ImageView mImageView = (ImageView) findViewById(R.id.item_image);
-            mImageView.setImageBitmap(mBitmap);
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if(resultCode == RESULT_OK) {
+                //mImageView.setImageBitmap(mBitmapThumbnail);
+                setPic();
+            }
+            else {
+                resetImage();
+            }
         }
+    }
+
+    private void resetImage()
+    {
+        mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_image));
+        mCurrentImagePath = "";
+        mImageFile = null;
     }
 
     private void showProgress(boolean state)
@@ -174,8 +214,50 @@ public class ItemCreateActivity extends ShareWhereActivity {
         }
     }
 
+    private File createImageFile() throws IOException {
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = new File(storageDir, UPLOAD_FILE_NAME);
+
+        // clean out the old uploaded image
+        if(image.exists()) {
+            image.delete();
+        }
+
+        image.createNewFile();
+
+        mCurrentImagePath = "file:" + image.getAbsolutePath();
+
+        return image;
+    }
+
+    private void setPic() {
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentImagePath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentImagePath, bmOptions);
+        mImageView.setImageBitmap(bitmap);
+    }
+
     private String convertToServerDate(String input)
     {
+        if(input.equals(""))
+            return "";
+
         // parse the date fields if any
         SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
         Date testDate = null;
@@ -220,7 +302,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
         }
 
         // Check for a valid shareable image
-        if (mBitmap == null) {
+        if (mImageFile == null) {
             Toast failToast = Toast.makeText(getApplicationContext(),
                     getText(R.string.error_missing_sharable_pic),
                     Toast.LENGTH_SHORT);
@@ -229,6 +311,11 @@ public class ItemCreateActivity extends ShareWhereActivity {
             if(focusView == null)
                 focusView = mItemTitleText;
             cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+            return;
         }
 
         RequestParams params = new RequestParams();
@@ -246,12 +333,16 @@ public class ItemCreateActivity extends ShareWhereActivity {
             params.put("end_date", endDate);
         }
 
+        try {
+            params.put("picture", new FileInputStream(mImageFile));
+        } catch (FileNotFoundException e) {
+            Log.wtf(this.getClass().getSimpleName(), "Image file pulled out from under us");
+            resetImage();
+            return;
+        }
+
         showProgress(true);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
-
-        params.put("picture", new ByteArrayInputStream(output.toByteArray()));
         params.put("shar_name", shareable_name);
         params.put("description", description);
 
@@ -280,7 +371,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
                 Log.d("ItemCreateActivity", resp.toString());
 
                 Intent i = new Intent(ItemCreateActivity.this, ItemDetailActivity.class);
-                i.putExtra("data", mBitmap);
+                i.putExtra("data", mBitmapThumbnail);
                 i.putExtra("title", shareable_name);
                 i.putExtra("description", description);
                 startActivity(i);
