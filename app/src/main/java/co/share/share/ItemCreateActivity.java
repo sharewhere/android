@@ -20,18 +20,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
+import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
 
+import co.share.share.net.ShareWhereRespHandler;
+import co.share.share.views.FloatingActionButton;
 
-public class ItemCreateActivity extends ActionBarActivity  {
+
+public class ItemCreateActivity extends ShareWhereActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Context mContext;
@@ -228,11 +234,23 @@ public class ItemCreateActivity extends ActionBarActivity  {
         else
             endpoint = "/makeshareablerequest";
 
-        NetworkService.post(endpoint, params, new TextHttpResponseHandler() {
+        NetworkService.post(endpoint, params, new ShareWhereRespHandler() {
             @Override
-            public void onSuccess(int code, Header [] lol, String response) {
-                Log.d("ItemCreateActivity", response);
-                showProgress(false);
+            public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                if(logoutIfInvalidCookie(resp, ItemCreateActivity.this))
+                    return;
+
+                try {
+                    boolean success = resp.getBoolean("success");
+                    if (!success)
+                        return;
+
+                } catch (JSONException e) {
+                    Log.wtf(this.getClass().getSimpleName(), "JSON Exception in ItemCreateActivity");
+                    return;
+                }
+
+                Log.d("ItemCreateActivity", resp.toString());
 
                 Intent i = new Intent(ItemCreateActivity.this, ItemDetailActivity.class);
                 i.putExtra("data", mBitmap);
@@ -246,6 +264,11 @@ public class ItemCreateActivity extends ActionBarActivity  {
             public void onFailure(int code, Header [] wow, String wat, Throwable e) {
                 Toast failToast = Toast.makeText(getApplicationContext(), "Failed to create sharable", Toast.LENGTH_LONG);
                 failToast.show();
+            }
+
+            @Override
+            public void onFinish()
+            {
                 showProgress(false);
             }
         });
