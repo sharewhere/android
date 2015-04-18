@@ -27,8 +27,10 @@ import java.util.List;
 
 import co.share.share.ItemDetailActivity;
 import co.share.share.R;
+import co.share.share.ShareWhereActivity;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
+import co.share.share.net.ShareWhereRespHandler;
 import co.share.share.util.ItemAdapter;
 
 public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -105,9 +107,12 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     public void getOffers() {
         mListViewContainer.setRefreshing(true);
-        NetworkService.get("/browseoffers", null, new JsonHttpResponseHandler() {
+        NetworkService.get("/browseoffers", null, new ShareWhereRespHandler() {
              @Override
              public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                 if(logoutIfInvalidCookie(resp, getActivity()))
+                     return;
+
                  try {
                      boolean success = resp.getBoolean("success");
                      if(!success)
@@ -117,7 +122,6 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
                      Type listType = new TypeToken<List<Shareable>>(){}.getType();
                      offersList = gson.fromJson(offers.toString(), listType);
-                     //offersList.get(0).shar_pic_name
 
                      mAdapter = new ItemAdapter(offersList, getActivity());
                      mRecyclerView.setAdapter(mAdapter);
@@ -125,13 +129,13 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
                  } catch (JSONException e) {
                     Log.wtf(this.getClass().getSimpleName(), "JSON Exception at offers");
                  }
-                 mListViewContainer.setRefreshing(false);
              }
 
              @Override
-             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResp) {
+             public void onFinish() {
                  mListViewContainer.setRefreshing(false);
              }
+
         });
     }
 

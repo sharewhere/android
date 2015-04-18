@@ -26,6 +26,7 @@ import java.util.List;
 import co.share.share.R;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
+import co.share.share.net.ShareWhereRespHandler;
 import co.share.share.util.ItemAdapter;
 
 public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -95,9 +96,12 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     public void getRequests() {
         mListViewContainer.setRefreshing(true);
-        NetworkService.get("/browserequests", null, new JsonHttpResponseHandler() {
+        NetworkService.get("/browserequests", null, new ShareWhereRespHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                if(logoutIfInvalidCookie(resp, getActivity()))
+                    return;
+
                 try {
                     boolean success = resp.getBoolean("success");
                     if (!success)
@@ -115,11 +119,10 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
                 } catch (JSONException e) {
                     Log.wtf(this.getClass().getSimpleName(), "JSON Exception at offers");
                 }
-                mListViewContainer.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResp) {
+            public void onFinish() {
                 mListViewContainer.setRefreshing(false);
             }
         });

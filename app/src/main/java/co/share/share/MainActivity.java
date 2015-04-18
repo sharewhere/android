@@ -32,7 +32,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
 
-
 public class MainActivity extends ShareWhereActivity {
     private final String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;

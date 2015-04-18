@@ -64,6 +64,9 @@ public class ShareWhereActivity extends ActionBarActivity {
 
     public void logout(String message)
     {
+        Toast logoutToast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+        logoutToast.show();
+
         logout();
     }
 
@@ -79,9 +82,6 @@ public class ShareWhereActivity extends ActionBarActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
-        Toast logoutToast = Toast.makeText(getApplicationContext(), "Logged out", Toast.LENGTH_SHORT);
-        logoutToast.show();
 
         this.finish();
     }

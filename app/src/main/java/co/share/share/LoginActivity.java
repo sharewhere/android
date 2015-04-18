@@ -169,8 +169,6 @@ public class LoginActivity extends ShareWhereActivity {
                 } catch(JSONException exp) {
                     System.out.println("Failure!");
                 }
-
-                mProgress.hide();
             }
 
             @Override
@@ -178,7 +176,11 @@ public class LoginActivity extends ShareWhereActivity {
                 System.out.println("Failure! Code: " + statusCode);
                 Toast failToast = Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_SHORT);
                 failToast.show();
+            }
 
+            @Override
+            public void onFinish()
+            {
                 mProgress.hide();
             }
         });
