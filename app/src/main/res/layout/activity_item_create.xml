@@ -204,14 +204,4 @@
 
     </RelativeLayout>
 
-    <!--Button
-        android:layout_width="128dp"
-        android:layout_height="32dp"
-        android:background="@drawable/rippledrawable"
-        android:textColor="#fff"
-        android:elevation="2dp"
-        android:textSize="20dp"
-        android:text="Date Thing"/-->
-
-
 </LinearLayout>

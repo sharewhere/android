@@ -4,14 +4,11 @@ import java.util.Date;
 
 public class Transaction {
 
-    private User lender;
-    private User borrower;
-    private Item item;
-    private Date borrowDate;
-    private Date returnDate;
-
-    public Transaction() {
-
-    }
+    private int transation_id;
+    private String lender;
+    private String borrower;
+    private int shar_id;
+    private String description;
+    private String tranaction_type;
 
 }

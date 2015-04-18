@@ -78,7 +78,7 @@ public class ProfileActivity extends ActionBarActivity implements NotifyScrollVi
         *   query user profile from api here
         */
         mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
-        getSupportActionBar().setTitle("Placeholderman");
+        getSupportActionBar().setTitle("Profile");
 
 
         setupNotifyScrollView();

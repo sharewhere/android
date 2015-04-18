@@ -3,6 +3,8 @@
     android:id="@+id/notify_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:background="@color/color_background">
 
     <FrameLayout
@@ -56,42 +58,56 @@
             android:clipToPadding="false"
             android:background="@color/color_primary">
 
-
-            <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/toolbar_main"
-                android:layout_height="wrap_content"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:minHeight="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:contentInsetStart="@dimen/keyline_2"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                android:paddingTop="-35dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_height="wrap_content">
+
+
+                <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/toolbar_main"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:minHeight="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:contentInsetStart="@dimen/keyline_2"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_colorNormal="@color/pink"
+                    app:fab_colorPressed="@color/pink_pressed"
+                    android:layout_alignTop="@id/toolbar_main"
+                    android:layout_marginTop="-35dp"
+                    android:layout_marginRight="@dimen/keyline_1_minus_8dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="right"
+                    android:elevation="20dp"
+                />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cooldude1"
+                android:text="User"
                 android:textColor="@color/white"
                 android:id="@+id/creator"
-                android:layout_marginTop="@dimen/keyline_1_minus_8dp"
+                android:layout_marginBottom="@dimen/keyline_1_minus_8dp"
                 android:layout_marginLeft="@dimen/keyline_2"
                 android:layout_marginRight="@dimen/keyline_2"/>
 
 
-
             <!-- TODO make this on the top of the ab -->
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_colorNormal="@color/pink"
-                app:fab_colorPressed="@color/pink_pressed"
-                android:layout_alignBottom="@id/toolbar_secondary"
-                android:layout_marginBottom="-30dp"
-                android:layout_gravity="right"
-                />
+
         </LinearLayout>
 
         <!--co.share.share.views.FloatingActionButton
