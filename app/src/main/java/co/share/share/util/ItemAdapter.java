@@ -47,6 +47,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     d.putExtra("shar_name", s.shar_name);
                     d.putExtra("shar_pic_name", s.shar_pic_name);
                     d.putExtra("shar_desc", s.description);
+                    d.putExtra("shar_creator", s.username);
                     mContext.startActivity(d);
                 }
             });

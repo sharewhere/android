@@ -1,5 +1,7 @@
 package co.share.share;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
@@ -9,38 +11,40 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
 
 import co.share.share.net.NetworkService;
-import co.share.share.views.FloatingActionButton;
 
 
-public class ItemCreateActivity extends ActionBarActivity {
+public class ItemCreateActivity extends ActionBarActivity  {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    Context mContext;
     Bitmap mBitmap;
     EditText mItemTitleText;
     EditText mDescriptionText;
+    TextView mStartDateText;
+    TextView mEndDateText;
     Menu mOptionsMenu;
     private CreateType mCreateType;
 
     public static final String CREATE_TYPE = "CREATE_TYPE";
+
     public enum CreateType {
         OFFER,
         REQUEST
@@ -60,8 +64,11 @@ public class ItemCreateActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        mContext = this;
         mItemTitleText = (EditText) findViewById(R.id.item_title);
         mDescriptionText = (EditText) findViewById(R.id.item_description);
+        mStartDateText = (TextView) findViewById(R.id.start_date);
+        mEndDateText = (TextView) findViewById(R.id.end_date);
 
         // floating action button
         findViewById(R.id.action_add_image).setOnClickListener(new View.OnClickListener() {
@@ -71,6 +78,38 @@ public class ItemCreateActivity extends ActionBarActivity {
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
+            }
+
+        });
+
+        Calendar c = Calendar.getInstance();
+        final int startYear = c.get(Calendar.YEAR);
+        final int startMonth = c.get(Calendar.MONTH);
+        final int startDay = c.get(Calendar.DAY_OF_MONTH);
+
+        findViewById(R.id.start_date_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        String date = + monthOfYear + "/" + dayOfMonth + "/" +  year;
+                        mStartDateText.setText(date);
+                    }
+                }, startYear, startMonth, startDay).show();
+            }
+        });
+
+        findViewById(R.id.end_date_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(mContext, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        String date = + monthOfYear + "/" + dayOfMonth + "/" +  year;
+                        mEndDateText.setText(date);
+                    }
+                }, startYear, startMonth, startDay).show();
             }
         });
     }

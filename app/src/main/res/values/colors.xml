@@ -2,7 +2,8 @@
 <resources>
     <color name="color_primary">#00BCD4</color>
     <color name="color_primary_dark">#0097A7</color>
-    <color name="color_accent">#C6FF00</color>
+    <!--color name="color_accent">#C6FF00</color-->
+    <color name="color_accent">#AEEA00</color>
 
     <color name="fab_color_1">#ff5252</color>
     <color name="fab_color_1_muted">#ff8080</color>

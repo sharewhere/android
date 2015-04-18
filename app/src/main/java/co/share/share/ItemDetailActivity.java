@@ -32,6 +32,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
     private FrameLayout mImageFrameLayout;
     private ImageView mImageView;
     private TextView mDescription;
+    private TextView mCreator;
 
     private LinearLayout mContentLinearLayout;
 
@@ -50,6 +51,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         mImageFrameLayout = (FrameLayout) findViewById(R.id.image_frame_layout);
         mImageView = (ImageView) findViewById(R.id.image_view);
         mDescription = (TextView) findViewById(R.id.description);
+        mCreator = (TextView) findViewById(R.id.creator);
 
         mContentLinearLayout = (LinearLayout) findViewById(R.id.content_linear_layout);
 
@@ -63,9 +65,11 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
             Bitmap b = (Bitmap) getIntent().getExtras().get("data");
             if (b != null) /* TODO dont do it this way from the deal */
                 mImageView.setImageBitmap(b);
-            String name = getIntent().getExtras().getString("shar_name");
-            String pic_name = getIntent().getExtras().getString("shar_pic_name");
-            String desc = getIntent().getExtras().getString("shar_desc");
+            Bundle extras = getIntent().getExtras();
+            String name = extras.getString("shar_name");
+            String pic_name = extras.getString("shar_pic_name");
+            String desc = extras.getString("shar_desc");
+            String creator = extras.getString("shar_creator");
 
             /* TODO Rework this so that I dont have to load placeholder initially */
             mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
@@ -81,6 +85,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                 });
             }
             getSupportActionBar().setTitle(name);
+            mCreator.setText("Created by " + creator);
             mDescription.setText(desc);
         }
 

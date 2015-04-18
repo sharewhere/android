@@ -92,6 +92,8 @@ public class MainActivity extends ShareWhereActivity {
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setIndicatorColor(getResources().getColor(R.color.color_accent));
+        tabs.setIndicatorHeight(12);
+        tabs.setDividerColor(getResources().getColor(R.color.color_primary_dark));
         tabs.setTextColor(Color.WHITE);
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);

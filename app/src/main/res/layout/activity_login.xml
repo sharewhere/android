@@ -1,6 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:gravity="center_horizontal"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="co.share.share.LoginActivity"
     android:background="@color/color_primary">
@@ -38,7 +41,8 @@
         >
 
         <LinearLayout android:id="@+id/email_login_form" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="vertical">
+            android:layout_height="wrap_content" android:orientation="vertical"
+            >
 
             <EditText android:id="@+id/username" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:hint="@string/prompt_username"
@@ -58,6 +62,7 @@
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:layout_marginTop="16dp" android:text="@string/action_sign_in"
                 android:textStyle="bold"
+                android:textColor="@color/color_primary_dark"
                 />
 
             <Button
