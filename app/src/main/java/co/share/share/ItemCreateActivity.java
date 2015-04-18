@@ -38,11 +38,21 @@ public class ItemCreateActivity extends ActionBarActivity {
     EditText mItemTitleText;
     EditText mDescriptionText;
     Menu mOptionsMenu;
+    private CreateType mCreateType;
+
+    public static final String CREATE_TYPE = "CREATE_TYPE";
+    public enum CreateType {
+        OFFER,
+        REQUEST
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_create);
+
+        Bundle extras = getIntent().getExtras();
+        mCreateType = (CreateType) extras.get(CREATE_TYPE);
 
         // Set up action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -173,7 +183,13 @@ public class ItemCreateActivity extends ActionBarActivity {
         params.put("shar_name", shareable_name);
         params.put("description", description);
 
-        NetworkService.post("/makeshareableoffer", params, new TextHttpResponseHandler() {
+        String endpoint;
+        if (mCreateType == CreateType.OFFER)
+            endpoint = "/makeshareableoffer";
+        else
+            endpoint = "/makeshareablerequest";
+
+        NetworkService.post(endpoint, params, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int code, Header [] lol, String response) {
                 Log.d("ItemCreateActivity", response);
