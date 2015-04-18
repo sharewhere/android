@@ -1,73 +1,119 @@
 package co.share.share;
 
 import android.content.Intent;
-import android.provider.MediaStore;
+import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ViewSwitcher;
 
-import co.share.share.util.ItemAdapter;
-import co.share.share.views.FloatingActionButton;
+import com.astuetz.PagerSlidingTabStrip;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import co.share.share.fragments.OffersFragment;
+import co.share.share.fragments.RequestsFragment;
 
-public class MainActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener {
+public class MainActivity extends ShareWhereActivity {
     private final String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SearchView mSearchView;
-    private static final int SPAN_COUNT = 3; // num columns in grid
+    private static final int SPAN_COUNT = 2; // num columns in grid
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private MediaPlayer mMediaPlayer;
+    private boolean mMlgActive;
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // check if we are still logged in!
+        if(!isLoggedin())
+            doLogin();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        mMediaPlayer.release();
+        mMediaPlayer = null;
+
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // check to see if the cookie exists, otherwise login
+        if(!isLoggedin())
+            doLogin();
+
+        if(mMediaPlayer == null)
+            mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.spooky);
+
+        // initialize image streaming
+        // Create global configuration and initialize ImageLoader with this config
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
+        ImageLoader.getInstance().init(config);
+
         setContentView(R.layout.activity_main);
 
         // Set up action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setIndicatorColor(getResources().getColor(R.color.color_accent));
+        tabs.setTextColor(Color.WHITE);
+        tabs.setShouldExpand(true);
+        tabs.setViewPager(pager);
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.color_primary_dark));
 
         // floating action button
-        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab_1);
-        fab1.setOnCheckedChangeListener(this);
+        findViewById(R.id.action_share).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
+                startActivity(intent);
+            }
+        });
 
-
-        // set up recycler view
-        mRecyclerView = (RecyclerView) findViewById(R.id.item_view);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-
-        // use a linear layout manager
-        mLayoutManager = new GridLayoutManager(this, SPAN_COUNT);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // test data
-        String[] myDataset = new String[20];
-        for(int i = 0; i < 20; i++)
-            myDataset[i] = "item " + i;
-
-        // specify an adapter (see also next example)
-        mAdapter = new ItemAdapter(myDataset);
-        mRecyclerView.setAdapter(mAdapter);
+        ListView mDrawerList = (ListView) findViewById(R.id.drawer_list);
+        String[] values = {"Browse", "Share", "Borrow", "Requested"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        mDrawerList.setAdapter(adapter);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,6 +134,10 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
 
         switch(id) {
             case R.id.action_settings:
+                mlg_active();
+                return true;
+            case R.id.action_logout:
+                logout();
                 return true;
             case R.id.action_search:
                 mSearchView.setIconified(false);
@@ -97,31 +147,84 @@ public class MainActivity extends ActionBarActivity implements FloatingActionBut
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
-        // When a FAB is toggled, log the action.
-        switch (fabView.getId()){
-            case R.id.fab_1:
-                //Log.d(TAG, String.format("FAB 1 was %s.", isChecked ? "checked" : "unchecked"));
-                Intent intent = new Intent(this, ItemCreateActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.fab_image:
-                Log.i("fab", "so fab");
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-                break;
-            default:
-                break;
+    private void mlg_active()
+    {
+        if(mMlgActive)
+            return;
+
+        mMlgActive = true;
+
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        FragmentStatePagerAdapter a = (FragmentStatePagerAdapter) pager.getAdapter();
+        final OffersFragment offers = (OffersFragment) a.instantiateItem(pager, 0);
+        final RequestsFragment req = (RequestsFragment) a.instantiateItem(pager, 1);
+
+        mlgSwitchViews(offers.getRecycler());
+        mlgSwitchViews(req.getRecycler());
+
+        mMediaPlayer.start();
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mlgSwitchViews(offers.getRecycler());
+                mlgSwitchViews(req.getRecycler());
+                mMlgActive = false;
+            }
+        });
+    }
+
+    private void mlgSwitchViews(RecyclerView recycler)
+    {
+        for(int i = 0; i < recycler.getChildCount(); i++) {
+            View v = recycler.getChildAt(i);
+
+            v = v.findViewById(R.id.list_item_switch);
+
+            if(v != null) {
+                ViewSwitcher sw = (ViewSwitcher)v;
+                sw.showNext();
+            }
         }
     }
 
+    private void doLogin()
+    {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     private class ActiveItemClickListener implements AbsListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        }
+    }
+
+    public class PagerAdapter extends FragmentStatePagerAdapter {
+
+        private final String[] TITLES = {"Offers", "Requests"};
+
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if(position == 0)
+                return new OffersFragment();
+            else
+                return new RequestsFragment();
 
         }
     }

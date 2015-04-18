@@ -1,5 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="co.share.share.ItemCreateActivity"
     android:orientation="vertical">
@@ -62,7 +64,19 @@
         android:layout_marginLeft="8dp"/>
 
 
-    <co.share.share.views.FloatingActionButton
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="@color/pink"
+            fab:fab_colorPressed="@color/pink_pressed"
+            fab:fab_icon="@drawable/ic_camera"
+            android:layout_alignBottom="@id/toolbar_secondary"
+            android:layout_marginBottom="-30dp"
+            />
+
+    <!--co.share.share.views.FloatingActionButton
         android:id="@+id/fab_image"
         android:layout_width="@dimen/fab_size_small"
         android:layout_height="@dimen/fab_size_small"
@@ -72,7 +86,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignBottom="@id/toolbar_secondary"
         android:layout_marginBottom="-20dp"
-        android:layout_marginLeft="8dp">
+        android:layout_marginLeft="8dp"
+        >
 
         <ImageView
             android:layout_width="@dimen/fab_icon_size"
@@ -81,7 +96,7 @@
             android:layout_gravity="center"
             android:duplicateParentState="true"/>
 
-    </co.share.share.views.FloatingActionButton>
+    </co.share.share.views.FloatingActionButton-->
 
         <LinearLayout
             android:orientation="vertical"

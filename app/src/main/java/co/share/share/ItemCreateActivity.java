@@ -6,18 +6,39 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import co.share.share.models.Shareable;
+import co.share.share.net.NetworkService;
+import co.share.share.net.ShareWhereRespHandler;
 import co.share.share.views.FloatingActionButton;
 
 
-public class ItemCreateActivity extends ActionBarActivity implements FloatingActionButton.OnCheckedChangeListener {
+public class ItemCreateActivity extends ShareWhereActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Bitmap mBitmap;
+    EditText mItemTitleText;
+    EditText mDescriptionText;
+    Menu mOptionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +51,26 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
+        mItemTitleText = (EditText) findViewById(R.id.item_title);
+        mDescriptionText = (EditText) findViewById(R.id.item_description);
+
         // floating action button
-        FloatingActionButton fab_image= (FloatingActionButton) findViewById(R.id.fab_image);
-        fab_image.setOnCheckedChangeListener(this);
+        findViewById(R.id.action_add_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        });
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mOptionsMenu = menu; // keep a reference for progress changes
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_item_create, menu);
         return true;
@@ -54,28 +87,10 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
             case R.id.action_settings:
                 return true;
             case R.id.action_create:
-                Intent i = new Intent(this, ItemDetailActivity.class);
-                i.putExtra("data", mBitmap);
-                startActivity(i);
+                createShareable();
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCheckedChanged(FloatingActionButton fabView, boolean isChecked) {
-        // When a FAB is toggled, log the action.
-        switch (fabView.getId()){
-            case R.id.fab_image:
-                Log.i("fab", "so fab");
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -87,5 +102,117 @@ public class ItemCreateActivity extends ActionBarActivity implements FloatingAct
             ImageView mImageView = (ImageView) findViewById(R.id.item_image);
             mImageView.setImageBitmap(mBitmap);
         }
+    }
+
+    private void showProgress(boolean state)
+    {
+        // grab the target action bar view
+        final MenuItem refreshItem = mOptionsMenu.findItem(R.id.action_create);
+
+        if (refreshItem != null) {
+            if (state) {
+                refreshItem.setActionView(R.layout.actionbar_unknown_progress);
+            } else {
+                refreshItem.setActionView(null);
+            }
+        }
+    }
+
+    private void createShareable()
+    {
+        final String shareable_name = mItemTitleText.getText().toString();
+        final String description = mDescriptionText.getText().toString();
+
+        // Reset errors.
+        mItemTitleText.setError(null);
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid shareable name
+        if (TextUtils.isEmpty(shareable_name)) {
+            mItemTitleText.setError(getString(R.string.error_invalid_sharable_name));
+            focusView = mItemTitleText;
+            cancel = true;
+        }
+
+        // Check for a valid shareable description
+        if (TextUtils.isEmpty(description)) {
+            mDescriptionText.setError(getString(R.string.error_invalid_description));
+            if(focusView == null)
+                focusView = mItemTitleText;
+            cancel = true;
+        }
+
+        // Check for a valid shareable image
+        if (mBitmap == null) {
+            Toast failToast = Toast.makeText(getApplicationContext(),
+                    getText(R.string.error_missing_sharable_pic),
+                    Toast.LENGTH_SHORT);
+            failToast.show();
+
+            if(focusView == null)
+                focusView = mItemTitleText;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            if(focusView != null)
+                focusView.requestFocus();
+            return;
+        }
+
+        showProgress(true);
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+
+        RequestParams params = new RequestParams();
+        params.put("picture", new ByteArrayInputStream(output.toByteArray()));
+        params.put("shar_name", shareable_name);
+        params.put("description", description);
+
+        NetworkService.post("/makeshareableoffer", params, new ShareWhereRespHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                if(logoutIfInvalidCookie(resp, ItemCreateActivity.this))
+                    return;
+
+                try {
+                    boolean success = resp.getBoolean("success");
+                    if (!success)
+                        return;
+
+                } catch (JSONException e) {
+                    Log.wtf(this.getClass().getSimpleName(), "JSON Exception in ItemCreateActivity");
+                    return;
+                }
+
+                Log.d("ItemCreateActivity", resp.toString());
+
+                Intent i = new Intent(ItemCreateActivity.this, ItemDetailActivity.class);
+                i.putExtra("data", mBitmap);
+                i.putExtra("title", shareable_name);
+                i.putExtra("description", description);
+                startActivity(i);
+                finish();
+            }
+
+            @Override
+            public void onFailure(int code, Header [] wow, String wat, Throwable e) {
+                Toast failToast = Toast.makeText(getApplicationContext(), "Failed to create sharable", Toast.LENGTH_LONG);
+                failToast.show();
+            }
+
+            @Override
+            public void onFinish()
+            {
+                showProgress(false);
+            }
+        });
+
     }
 }

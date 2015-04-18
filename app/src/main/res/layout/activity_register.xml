@@ -1,0 +1,82 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="co.share.share.RegisterActivity"
+    android:background="@color/color_primary">
+
+    <!-- Include actionbar toolbar
+    <include layout="@layout/toolbar_main"/> -->
+
+    <ImageView
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:id="@+id/imageView"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/sharewhere_logo"
+        android:contentDescription="ShareWhere Logo"
+        android:cropToPadding="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ShareWhere"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white" />
+
+    <ProgressBar android:id="@+id/register_progress" style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" android:visibility="gone"
+        android:layout_marginTop="@dimen/keyline_1"/>
+
+    <ScrollView android:id="@+id/register_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/keyline_1_minus_8dp">
+
+        <LinearLayout android:id="@+id/register_form_content" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="vertical">
+
+            <EditText android:id="@+id/username" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:hint="@string/prompt_username"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:inputType="text" />
+
+            <EditText android:id="@+id/password" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:hint="@string/prompt_password"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified" android:inputType="textPassword"
+                android:maxLines="1" android:singleLine="true" />
+
+            <EditText android:id="@+id/email" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:hint="@string/prompt_email"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified" android:inputType="textEmailAddress"
+                android:maxLines="1" android:singleLine="true" />
+
+            <EditText android:id="@+id/zipcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_zip"
+                android:inputType="number" />
+
+            <Button android:id="@+id/register_button" style="?android:textAppearanceSmall"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" android:text="@string/action_register"
+                android:textStyle="bold"
+                />
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>
