@@ -1,6 +1,7 @@
 package co.share.share.util;
 
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -43,11 +44,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 public void onClick(View v) {
                     int pos = getPosition();
                     Shareable s = mDataset.get(pos);
+
                     Intent d = new Intent(mContext, ItemDetailActivity.class);
-                    d.putExtra("shar_name", s.shar_name);
-                    d.putExtra("shar_pic_name", s.shar_pic_name);
-                    d.putExtra("shar_desc", s.description);
-                    d.putExtra("shar_creator", s.username);
+                    d.putExtra(Constants.SHAREABLE, s);
                     mContext.startActivity(d);
                 }
             });
@@ -67,7 +66,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public ItemAdapter(List<Shareable> list, Context context) {
         mDataset = list;
         mContext = context;
-    //    this.clickListener = clickListener;
 
     }
 

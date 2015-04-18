@@ -1,6 +1,8 @@
 package co.share.share.models;
 
-public class Shareable {
+import java.io.Serializable;
+
+public class Shareable implements Serializable{
 
     public String username;
     public int shar_id;
