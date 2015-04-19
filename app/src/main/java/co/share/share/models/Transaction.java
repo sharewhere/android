@@ -4,11 +4,12 @@ import java.util.Date;
 
 public class Transaction {
 
-    private int transation_id;
-    private String lender;
-    private String borrower;
-    private int shar_id;
-    private String description;
-    private String tranaction_type;
+    /* gotta go fast */
+    public int transation_id;
+    public String lender;
+    public String borrower;
+    public int shar_id;
+    public String description;
+    public String tranaction_type;
 
 }

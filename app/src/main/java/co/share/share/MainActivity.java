@@ -123,7 +123,7 @@ public class MainActivity extends ShareWhereActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
-                intent.putExtra(ItemCreateActivity.CREATE_TYPE, ItemCreateActivity.CreateType.OFFER);
+                intent.putExtra(Constants.CREATE_TYPE, Constants.CreateType.OFFER);
                 startActivity(intent);
             }
         });
@@ -132,7 +132,7 @@ public class MainActivity extends ShareWhereActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
-                intent.putExtra(ItemCreateActivity.CREATE_TYPE, ItemCreateActivity.CreateType.REQUEST);
+                intent.putExtra(Constants.CREATE_TYPE, Constants.CreateType.REQUEST);
                 startActivity(intent);
             }
         });
