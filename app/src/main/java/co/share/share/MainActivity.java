@@ -3,6 +3,7 @@ package co.share.share;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -31,6 +32,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
+import co.share.share.util.Constants;
+import co.share.share.util.UserProfile;
 
 public class MainActivity extends ShareWhereActivity {
     private final String TAG = this.getClass().getSimpleName();
@@ -48,6 +51,10 @@ public class MainActivity extends ShareWhereActivity {
     protected void onResume()
     {
         super.onResume();
+
+        // Get username
+        String username = PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.SHAREWHERE_USERNAME, null);
+        UserProfile.getInstance().setUserName(username);
 
         // check if we are still logged in!
         if(!isLoggedin())

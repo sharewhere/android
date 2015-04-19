@@ -39,7 +39,7 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Shareable> offersList;
-    private static final int SPAN_COUNT = 2; // num columns in grid
+    private int SPAN_COUNT = 2; // num columns in grid
 
     private SwipeRefreshLayout mListViewContainer;
     Gson gson = new Gson();
@@ -85,6 +85,10 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
         
         if(mRecyclerView == null)
             return null;
+
+        if (userProfile)
+            SPAN_COUNT = 1;
+
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -133,7 +137,7 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
                      Type listType = new TypeToken<List<Shareable>>(){}.getType();
                      offersList = gson.fromJson(offers.toString(), listType);
 
-                     mAdapter = new ItemAdapter(offersList, getActivity());
+                     mAdapter = new ItemAdapter(offersList, getActivity(), userProfile);
                      mRecyclerView.setAdapter(mAdapter);
 
                  } catch (JSONException e) {

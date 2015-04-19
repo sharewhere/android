@@ -1,7 +1,6 @@
 package co.share.share.util;
 
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -26,6 +25,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context mContext;
     private List<Shareable>  mDataset;
     private View.OnClickListener clickListener;
+    private boolean isProfileView;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,6 +34,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // each data item is just a string in this case
         public CardView mCardView;
         public TextView mTextView;
+        public TextView mSubtitle;
         public ImageView mImageView;
         public ImageView mImageViewMlg;
         public ViewHolder(View v) {
@@ -51,6 +52,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 }
             });
             mTextView = (TextView) v.findViewById(R.id.item_text);
+            mSubtitle = (TextView) v.findViewById(R.id.item_subtitle);
             mTextView.setSelected(true);
             mImageView = (ImageView) v.findViewById(R.id.list_item_image);
             mImageViewMlg = (ImageView) v.findViewById(R.id.list_item_image_mlg);
@@ -63,10 +65,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ItemAdapter(List<Shareable> list, Context context) {
+    public ItemAdapter(List<Shareable> list, Context context, boolean isProfileView) {
         mDataset = list;
         mContext = context;
-
+        this.isProfileView = isProfileView;
     }
 
     // Create new views (invoked by the layout manager)
@@ -74,8 +76,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public ItemAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item, parent, false);
+        View v;
+        if (isProfileView)
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_list_item, parent, false);
+        else
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -85,7 +91,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position).shar_name);
+        Shareable s = mDataset.get(position);
+        holder.mTextView.setText(s.shar_name);
+        if(isProfileView) {
+            String username = UserProfile.getInstance().getUserName();
+            if (username.equals(s.username)) {
+                /* todo show number requests */
+                  holder.mSubtitle.setText("n Requests");
+            } else {
+                if (s.getSharableType() == 0)
+                    holder.mSubtitle.setText("to " + s.username);
+                else
+                    holder.mSubtitle.setText("from " + s.username);
+            }
+        }
+
         String pic = mDataset.get(position).shar_pic_name;
 
         if(pic != null)
@@ -93,7 +113,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         else
             holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
 
-        holder.mImageViewMlg.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder_mlg));
+        if (!isProfileView)
+            holder.mImageViewMlg.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder_mlg));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

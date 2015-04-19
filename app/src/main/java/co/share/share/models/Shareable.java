@@ -2,6 +2,8 @@ package co.share.share.models;
 
 import java.io.Serializable;
 
+import co.share.share.util.Constants;
+
 public class Shareable implements Serializable{
 
     public String username;
@@ -15,6 +17,24 @@ public class Shareable implements Serializable{
     public String start_date;
     public String end_date;
     public int state_id;
+
+
+    /**
+     * returns whether or not the object is a request or offer
+     * @return 0 if request 1 if offer
+     */
+    public int getSharableType() {
+        switch (this.state_name) {
+            case Constants.REQ:
+            case Constants.REQ_OFR:
+                return 0;
+            case Constants.OFR:
+            case Constants.OFR_REQ:
+                return 1;
+            default:
+                return -1;
+        }
+    }
 
     /*
     "shar_id": 10,

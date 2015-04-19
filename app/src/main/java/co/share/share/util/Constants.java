@@ -4,6 +4,7 @@ public class Constants {
 
 
     public static final String SHAREABLE = "shareable";
+    public static final String SHAREWHERE_USERNAME = "sharewhere_username";
     public static final String STATE_ID = "state_id";
     public static final String STATE_NAME = "state_name";
     public static final String SHAR_ID = "shar_id";

@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.share.share.net.NetworkService;
+import co.share.share.util.Constants;
 import co.share.share.util.ProgressSpinner;
 
 
@@ -156,6 +158,9 @@ public class LoginActivity extends ShareWhereActivity {
                         // we are done logging in
                         Toast failToast = Toast.makeText(getApplicationContext(), "Welcome " + username + "!", Toast.LENGTH_SHORT);
                         failToast.show();
+
+                        // save username
+                        PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString(Constants.SHAREWHERE_USERNAME, mUsernameView.getText().toString()).commit();
 
                         // Restart the main activity with our new login
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
