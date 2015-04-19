@@ -20,13 +20,14 @@
         <ViewSwitcher
             android:layout_width="match_parent"
             android:id="@+id/list_item_switch"
-            android:layout_height="90dp"
+            android:layout_height="@dimen/item_image_height"
             android:outAnimation="@anim/abc_fade_out"
             android:inAnimation="@animator/mlg_fade_in">
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/item_image_height"
+                android:maxHeight="90dp"
                 android:src="@drawable/placeholder"
                 android:id="@+id/list_item_image"
                 android:layout_alignParentLeft="true"
@@ -36,7 +37,8 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/item_image_height"
+                android:maxHeight="@dimen/item_image_height"
                 android:src="@drawable/placeholder"
                 android:id="@+id/list_item_image_mlg"
                 android:layout_alignParentLeft="true"

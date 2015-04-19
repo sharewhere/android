@@ -4,6 +4,7 @@ package co.share.share.util;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.List;
 
@@ -83,13 +86,43 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        // to prevent stale images from being displayed, unset the image initially
+        holder.mImageView.setImageBitmap(null);
+
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position).shar_name);
+        Shareable s = mDataset.get(position);
+        holder.mTextView.setText(s.shar_name);
+        if(isProfileView) {
+            String username = UserProfile.getInstance().getUserName();
+            if (username.equals(s.username)) {
+                /* todo show number requests */
+                  holder.mSubtitle.setText("n Requests");
+            } else {
+                if (s.getSharableType() == 0)
+                    holder.mSubtitle.setText("to " + s.username);
+                else
+                    holder.mSubtitle.setText("from " + s.username);
+            }
+        }
+
+        // image displaying
         String pic = mDataset.get(position).shar_pic_name;
+        final ImageView img = holder.mImageView;
+
+        // nasty, nasty hack
+        float height = mContext.getResources().getDimension(R.dimen.item_image_height);
+        ImageSize size = new ImageSize((int)(height*2), (int)height);
 
         if(pic != null)
-            ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic), holder.mImageView);
+            ImageLoader.getInstance().loadImage(NetworkService.getImageURL(pic), size, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    img.setImageBitmap(loadedImage);
+                }
+            });
+
+            //ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic), holder.mImageView);
         else
             holder.mImageView.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.placeholder));
 

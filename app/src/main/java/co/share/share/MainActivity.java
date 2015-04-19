@@ -26,6 +26,7 @@ import android.widget.ViewSwitcher;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -38,8 +39,6 @@ public class MainActivity extends ShareWhereActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SearchView mSearchView;
-    private static final int SPAN_COUNT = 2; // num columns in grid
-    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private MediaPlayer mMediaPlayer;
     private boolean mMlgActive;
@@ -77,8 +76,18 @@ public class MainActivity extends ShareWhereActivity {
         // initialize image streaming
         // Create global configuration and initialize ImageLoader with this config
         if(!ImageLoader.getInstance().isInited()) {
-             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-             ImageLoader.getInstance().init(config);
+
+            DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .build();
+            ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                    .defaultDisplayImageOptions(defaultOptions)
+                    .memoryCacheSize(5*1024*1024)
+                    .diskCacheSize(50*1024*1024)
+                    //.writeDebugLogs()
+                    .build();
+            ImageLoader.getInstance().init(config);
         }
 
         setContentView(R.layout.activity_main);
