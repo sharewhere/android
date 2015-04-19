@@ -93,18 +93,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // - replace the contents of the view with that element
         Shareable s = mDataset.get(position);
         holder.mTextView.setText(s.shar_name);
-        if(isProfileView) {
-            String username = UserProfile.getInstance().getUserName();
-            if (username.equals(s.username)) {
-                /* todo show number requests */
-                  holder.mSubtitle.setText("n Requests");
-            } else {
-                if (s.getSharableType() == 0)
-                    holder.mSubtitle.setText("to " + s.username);
-                else
-                    holder.mSubtitle.setText("from " + s.username);
-            }
-        }
 
         // image displaying
         String pic = mDataset.get(position).shar_pic_name;
