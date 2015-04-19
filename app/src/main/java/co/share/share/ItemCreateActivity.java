@@ -43,6 +43,7 @@ import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
 
 import co.share.share.net.ShareWhereRespHandler;
+import co.share.share.util.Constants;
 import co.share.share.views.FloatingActionButton;
 
 
@@ -54,24 +55,20 @@ public class ItemCreateActivity extends ShareWhereActivity {
     Context mContext;
 
     ImageView mImageView;
+    int mTargetW;
+    int mTargetH;
     EditText mItemTitleText;
     EditText mDescriptionText;
     TextView mStartDateText;
     TextView mEndDateText;
     Menu mOptionsMenu;
-    CreateType mCreateType;
+    Constants.CreateType mCreateType;
 
     // image handling
     Bitmap mBitmapThumbnail;
     File mImageFile;
     String mCurrentImagePath;
 
-    public static final String CREATE_TYPE = "CREATE_TYPE";
-
-    public enum CreateType {
-        OFFER,
-        REQUEST
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +76,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
         setContentView(R.layout.activity_item_create);
 
         Bundle extras = getIntent().getExtras();
-        mCreateType = (CreateType) extras.get(CREATE_TYPE);
+        mCreateType = (Constants.CreateType) extras.get(Constants.CREATE_TYPE);
 
         // Set up action bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -185,7 +182,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if(resultCode == RESULT_OK) {
                 //mImageView.setImageBitmap(mBitmapThumbnail);
-                setPic();
+                //setPic();
             }
             else {
                 resetImage();
@@ -225,15 +222,21 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
         image.createNewFile();
 
-        mCurrentImagePath = image.getAbsolutePath();
+        mCurrentImagePath = "file:" + image.getAbsolutePath();
 
         return image;
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus){
+        mTargetW = mImageView.getWidth();
+        mTargetH = mImageView.getHeight();
+    }
+
     private void setPic() {
         // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
+        //int targetW = mImageView.getWidth();
+        //int targetH = mImageView.getHeight();
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -243,7 +246,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
         int photoH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        int scaleFactor = Math.min(photoW/mTargetW, photoH/mTargetH);
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
@@ -275,10 +278,11 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
     private void createShareable()
     {
-        final String shareable_name = mItemTitleText.getText().toString();
-        final String description = mDescriptionText.getText().toString();
-        String startDate = mStartDateText.getText().toString();
-        String endDate = mEndDateText.getText().toString();
+        Shareable s = new Shareable();
+        s.shar_name = mItemTitleText.getText().toString();
+        s.description = mDescriptionText.getText().toString();
+        s.start_date = mStartDateText.getText().toString();
+        s.end_date = mEndDateText.getText().toString();
 
         // Reset errors.
         mItemTitleText.setError(null);
@@ -287,14 +291,14 @@ public class ItemCreateActivity extends ShareWhereActivity {
         View focusView = null;
 
         // Check for a valid shareable name
-        if (TextUtils.isEmpty(shareable_name)) {
+        if (TextUtils.isEmpty(s.shar_name)) {
             mItemTitleText.setError(getString(R.string.error_invalid_sharable_name));
             focusView = mItemTitleText;
             cancel = true;
         }
 
         // Check for a valid shareable description
-        if (TextUtils.isEmpty(description)) {
+        if (TextUtils.isEmpty(s.description)) {
             mDescriptionText.setError(getString(R.string.error_invalid_description));
             if(focusView == null)
                 focusView = mItemTitleText;
@@ -321,16 +325,16 @@ public class ItemCreateActivity extends ShareWhereActivity {
         RequestParams params = new RequestParams();
 
         // parse the date fields if any
-        if(!TextUtils.isEmpty(startDate))
+        if(!TextUtils.isEmpty(s.start_date))
         {
-            startDate = convertToServerDate(startDate);
-            params.put("start_date", startDate);
+            s.start_date = convertToServerDate(s.start_date);
+            params.put("start_date", s.start_date);
         }
 
-        if(!TextUtils.isEmpty(endDate))
+        if(!TextUtils.isEmpty(s.end_date))
         {
-            endDate = convertToServerDate(endDate);
-            params.put("end_date", endDate);
+            s.end_date = convertToServerDate(s.end_date);
+            params.put("end_date", s.end_date);
         }
 
         try {
@@ -343,14 +347,16 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
         showProgress(true);
 
-        params.put("shar_name", shareable_name);
-        params.put("description", description);
+        params.put("shar_name", s.shar_name);
+        params.put("description", s.description);
 
         String endpoint;
-        if (mCreateType == CreateType.OFFER)
+        if (mCreateType == Constants.CreateType.OFFER)
             endpoint = "/makeshareableoffer";
         else
             endpoint = "/makeshareablerequest";
+
+        final Shareable shareable = s;
 
         NetworkService.post(endpoint, params, new ShareWhereRespHandler() {
             @Override
@@ -371,9 +377,12 @@ public class ItemCreateActivity extends ShareWhereActivity {
                 Log.d("ItemCreateActivity", resp.toString());
 
                 Intent i = new Intent(ItemCreateActivity.this, ItemDetailActivity.class);
+                i.putExtra(Constants.SHAREABLE, shareable);
                 i.putExtra("data", mBitmapThumbnail);
+                /*
                 i.putExtra("title", shareable_name);
                 i.putExtra("description", description);
+                */
                 startActivity(i);
                 finish();
             }

@@ -19,6 +19,9 @@ public class Shareable implements Serializable{
     public int state_id;
 
 
+    public String[] pastTense = {"borrowed", "offered"};
+    public String[] presentTense = {"borrow", "offer"};
+
     /**
      * returns whether or not the object is a request or offer
      * @return 0 if request 1 if offer
@@ -35,6 +38,7 @@ public class Shareable implements Serializable{
                 return -1;
         }
     }
+
 
     /*
     "shar_id": 10,

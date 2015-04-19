@@ -41,7 +41,7 @@ public class MainActivity extends ShareWhereActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SearchView mSearchView;
-    private static final int SPAN_COUNT = 2; // num columns in grid
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private MediaPlayer mMediaPlayer;
@@ -114,7 +114,7 @@ public class MainActivity extends ShareWhereActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
-                intent.putExtra(ItemCreateActivity.CREATE_TYPE, ItemCreateActivity.CreateType.OFFER);
+                intent.putExtra(Constants.CREATE_TYPE, Constants.CreateType.OFFER);
                 startActivity(intent);
             }
         });
@@ -123,7 +123,7 @@ public class MainActivity extends ShareWhereActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ItemCreateActivity.class);
-                intent.putExtra(ItemCreateActivity.CREATE_TYPE, ItemCreateActivity.CreateType.REQUEST);
+                intent.putExtra(Constants.CREATE_TYPE, Constants.CreateType.REQUEST);
                 startActivity(intent);
             }
         });

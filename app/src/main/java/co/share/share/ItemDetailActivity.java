@@ -9,14 +9,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -39,7 +42,6 @@ import co.share.share.models.Transaction;
 import co.share.share.net.NetworkService;
 import co.share.share.net.ShareWhereRespHandler;
 import co.share.share.util.Constants;
-import co.share.share.util.ItemAdapter;
 import co.share.share.util.UserProfile;
 import co.share.share.views.NotifyScrollView;
 
@@ -49,11 +51,17 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
     private NotifyScrollView mNotifyScrollView;
 
     private FrameLayout mImageFrameLayout;
+
+    private LinearLayout mContentDetailLayout;
+    private ListView mTransactionList;
+
     private ImageView mImageView;
     private TextView mDescription;
     private TextView mCreator;
 
     private Shareable mSharable = null;
+    private List<Transaction> mTransactions;
+
     private boolean didUserCreate = false;
     private boolean shouldDisableAction = false;
 
@@ -74,6 +82,8 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         mNotifyScrollView = (NotifyScrollView) findViewById(R.id.notify_scroll_view);
 
         mImageFrameLayout = (FrameLayout) findViewById(R.id.image_frame_layout);
+        mContentDetailLayout = (LinearLayout) findViewById(R.id.content_detail_layout);
+        mTransactionList = (ListView) findViewById(R.id.transaction_list);
         mImageView = (ImageView) findViewById(R.id.image_view);
         mDescription = (TextView) findViewById(R.id.description);
         mCreator = (TextView) findViewById(R.id.creator);
@@ -116,8 +126,10 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         if (mSharable != null) {
 
             // check if user created item dont show item if user created it
-            if (mSharable.username.equals(UserProfile.getInstance().getUserName()))
+            if (mSharable.username.equals(UserProfile.getInstance().getUserName())) {
                 mButton.setVisibility(View.INVISIBLE);
+                didUserCreate = true;
+            }
 
             // Tells us if offer or request
             switch (mSharable.state_name) {
@@ -156,7 +168,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                             JSONArray ts = resp.getJSONArray("transactions");
                             Type listType = new TypeToken<List<Transaction>>() {
                             }.getType();
-                            List<Transaction> mTransactions = gson.fromJson(ts.toString(), listType);
+                            mTransactions = gson.fromJson(ts.toString(), listType);
                         }
                         else if (!resp.isNull("transaction")) {
                             JSONObject transaction = resp.getJSONObject("transaction");
@@ -168,9 +180,16 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                         Log.wtf(this.getClass().getSimpleName(), "JSON Exception at viewoffreq");
                     }
 
-
                     if (shouldDisableAction) {
                         mButton.setEnabled(false);
+                    }
+
+                    // show transactions
+                    if (didUserCreate) {
+                        mTransactionList.setVisibility(View.VISIBLE);
+                        mContentDetailLayout.setVisibility(View.INVISIBLE);
+                        if (mTransactions != null)
+                            mTransactionList.setAdapter(new TransactionAdapter(ItemDetailActivity.this, mTransactions));
                     }
                 }
                 @Override
@@ -186,6 +205,29 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
     }
 
+    public class TransactionAdapter extends ArrayAdapter<Transaction> {
+        private final Context context;
+        private final List<Transaction> transactions;
+
+        public TransactionAdapter(Context context, List<Transaction> transactions) {
+            super(context, R.layout.transaction_list_item, transactions);
+            this.context = context;
+            this.transactions = transactions;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.transaction_list_item, parent, false);
+            TextView textView = (TextView) rowView.findViewById(R.id.transaction_title);
+            Transaction t = transactions.get(position);
+
+            textView.setText(t.borrower);
+
+            return rowView;
+        }
+    }
 
     private View.OnClickListener offerClickListener = new View.OnClickListener() {
         @Override
