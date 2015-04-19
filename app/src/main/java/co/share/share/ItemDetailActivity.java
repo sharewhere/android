@@ -40,6 +40,7 @@ import co.share.share.net.NetworkService;
 import co.share.share.net.ShareWhereRespHandler;
 import co.share.share.util.Constants;
 import co.share.share.util.ItemAdapter;
+import co.share.share.util.UserProfile;
 import co.share.share.views.NotifyScrollView;
 
 
@@ -114,8 +115,11 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         /* set up button to do a deal based on the current deal */
         if (mSharable != null) {
 
+            // check if user created item dont show item if user created it
+            if (mSharable.username.equals(UserProfile.getInstance().getUserName()))
+                mButton.setVisibility(View.INVISIBLE);
 
-            /* Tells us if offer or request */
+            // Tells us if offer or request
             switch (mSharable.state_name) {
             case Constants.REQ:
             case Constants.REQ_OFR:
@@ -147,7 +151,6 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                         //Shareable s = gson.fromJson(shar.toString(), Shareable.class);
 
                         // Created by user if list other user otherwise
-                        didUserCreate = resp.has("transactions");
 
                         if (!resp.isNull("transactions")) {
                             JSONArray ts = resp.getJSONArray("transactions");
@@ -165,12 +168,6 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
                         Log.wtf(this.getClass().getSimpleName(), "JSON Exception at viewoffreq");
                     }
 
-                    // We only know this after we have loaded the network deal :o
-                    Log.i(ItemDetailActivity.class.getSimpleName(), didUserCreate?"ICREATEDTHIS":"SOMEONEELSEDIDTHIS");
-
-                    if (didUserCreate) {
-                        mButton.setVisibility(View.GONE);
-                    }
 
                     if (shouldDisableAction) {
                         mButton.setEnabled(false);

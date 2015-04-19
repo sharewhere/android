@@ -34,7 +34,7 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private static final int SPAN_COUNT = 2; // num columns in grid
+    private int SPAN_COUNT = 2; // num columns in grid
     private boolean userProfile;
 
     private SwipeRefreshLayout mListViewContainer;
@@ -86,6 +86,9 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        if (userProfile)
+            SPAN_COUNT = 1;
+
 
         // use a grid layout manager
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
@@ -122,7 +125,7 @@ public class RequestsFragment extends Fragment implements SwipeRefreshLayout.OnR
                     }.getType();
                     requestList = gson.fromJson(requests.toString(), listType);
 
-                    mAdapter = new ItemAdapter(requestList, getActivity());
+                    mAdapter = new ItemAdapter(requestList, getActivity(), userProfile);
                     mRecyclerView.setAdapter(mAdapter);
 
                 } catch (JSONException e) {
