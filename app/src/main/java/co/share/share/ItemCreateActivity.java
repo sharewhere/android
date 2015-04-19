@@ -225,7 +225,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
         image.createNewFile();
 
-        mCurrentImagePath = "file:" + image.getAbsolutePath();
+        mCurrentImagePath = image.getAbsolutePath();
 
         return image;
     }
