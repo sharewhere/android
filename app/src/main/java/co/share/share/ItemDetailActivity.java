@@ -97,9 +97,6 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         mButton = (FloatingActionButton) findViewById(R.id.action_item);
 
         if(getIntent().getExtras() != null) {
-            Bitmap b = (Bitmap) getIntent().getExtras().get("data");
-            if (b != null) /* TODO dont do it this way from the deal */
-                mImageView.setImageBitmap(b);
             Bundle extras = getIntent().getExtras();
 
             mSharable = (Shareable) extras.getSerializable(Constants.SHAREABLE);

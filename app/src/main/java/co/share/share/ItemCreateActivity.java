@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -182,7 +185,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if(resultCode == RESULT_OK) {
                 //mImageView.setImageBitmap(mBitmapThumbnail);
-                //setPic();
+                setPic();
             }
             else {
                 resetImage();
@@ -222,7 +225,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
         image.createNewFile();
 
-        mCurrentImagePath = "file:" + image.getAbsolutePath();
+        mCurrentImagePath = image.getAbsolutePath();
 
         return image;
     }
@@ -278,6 +281,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
     private void createShareable()
     {
+        // just used temporarily
         Shareable s = new Shareable();
         s.shar_name = mItemTitleText.getText().toString();
         s.description = mDescriptionText.getText().toString();
@@ -356,8 +360,6 @@ public class ItemCreateActivity extends ShareWhereActivity {
         else
             endpoint = "/makeshareablerequest";
 
-        final Shareable shareable = s;
-
         NetworkService.post(endpoint, params, new ShareWhereRespHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
@@ -374,15 +376,23 @@ public class ItemCreateActivity extends ShareWhereActivity {
                     return;
                 }
 
+                JSONObject shareable_added;
+
+                try {
+                    shareable_added = resp.getJSONObject("shareable_added");
+                } catch (JSONException e) {
+                    Log.wtf(this.getClass().getSimpleName(), "Shareable response not found");
+                    return;
+                }
+
+                Type type = new TypeToken<Shareable>(){}.getType();
+                Shareable shareable = (new Gson()).fromJson(shareable_added.toString(), type);
+
                 Log.d("ItemCreateActivity", resp.toString());
 
                 Intent i = new Intent(ItemCreateActivity.this, ItemDetailActivity.class);
                 i.putExtra(Constants.SHAREABLE, shareable);
-                i.putExtra("data", mBitmapThumbnail);
-                /*
-                i.putExtra("title", shareable_name);
-                i.putExtra("description", description);
-                */
+
                 startActivity(i);
                 finish();
             }
