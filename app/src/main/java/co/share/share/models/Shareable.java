@@ -17,6 +17,7 @@ public class Shareable implements Serializable{
     public String start_date;
     public String end_date;
     public int state_id;
+    public int responses;
 
 
     public String[] pastTense = {"borrowed", "offered"};
@@ -26,16 +27,17 @@ public class Shareable implements Serializable{
      * returns whether or not the object is a request or offer
      * @return 0 if request 1 if offer
      */
-    public int getSharableType() {
+
+    public Constants.CreateType getSharableType() {
         switch (this.state_name) {
             case Constants.REQ:
             case Constants.REQ_OFR:
-                return 0;
+                return Constants.CreateType.REQUEST;
             case Constants.OFR:
             case Constants.OFR_REQ:
-                return 1;
+                return Constants.CreateType.OFFER;
             default:
-                return -1;
+                return Constants.CreateType.ILLEGAL;
         }
     }
 

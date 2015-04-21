@@ -25,7 +25,8 @@ public class Constants {
 
     public enum CreateType {
         OFFER,
-        REQUEST
+        REQUEST,
+        ILLEGAL
     };
 
 
