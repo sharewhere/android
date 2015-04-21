@@ -112,6 +112,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         String pic = mDataset.get(position).shar_pic_name;
 
+        /* TODO: profile view circle image view is not being set. fix this */
+
         if(pic != null)
             ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic), holder.mImageView);
         else

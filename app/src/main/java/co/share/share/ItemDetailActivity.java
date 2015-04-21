@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ import co.share.share.util.UserProfile;
 import co.share.share.views.NotifyScrollView;
 
 
-public class ItemDetailActivity extends ActionBarActivity implements NotifyScrollView.Callback {
+public class ItemDetailActivity extends ShareWhereActivity implements NotifyScrollView.Callback {
 
     private NotifyScrollView mNotifyScrollView;
 
@@ -64,6 +65,7 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
     private boolean didUserCreate = false;
     private boolean shouldDisableAction = false;
+    private boolean isRequest = false;
 
     private LinearLayout mContentLinearLayout;
 
@@ -73,12 +75,9 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
 
     Gson gson = new Gson();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_detail);
-
-        // view matching
+    private void loadViews()
+    {
+        // load views in to private data
         mNotifyScrollView = (NotifyScrollView) findViewById(R.id.notify_scroll_view);
 
         mImageFrameLayout = (FrameLayout) findViewById(R.id.image_frame_layout);
@@ -95,106 +94,172 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
         setSupportActionBar(mToolbar);
 
         mButton = (FloatingActionButton) findViewById(R.id.action_item);
+    }
 
-        if(getIntent().getExtras() != null) {
-            Bundle extras = getIntent().getExtras();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_item_detail);
 
-            mSharable = (Shareable) extras.getSerializable(Constants.SHAREABLE);
+        loadViews();
 
-            /* TODO Rework this so that I dont have to load placeholder initially */
-            mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
+        Bundle extras = getIntent().getExtras();
 
-            //ImageLoader.getInstance().displayImage(NetworkService.getImageURL(pic_name), mImageView);
-            if (mSharable.shar_pic_name != null && !mSharable.shar_pic_name.isEmpty()) {
-                ImageLoader.getInstance().loadImage(NetworkService.getImageURL(mSharable.shar_pic_name), new SimpleImageLoadingListener() {
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        // Do whatever you want with Bitmap
-                        mImageView.setImageBitmap(loadedImage);
-                    }
-                });
-            }
-            getSupportActionBar().setTitle(mSharable.shar_name);
-            mCreator.setText("Created by " + mSharable.username);
-            mDescription.setText(mSharable.description);
+         /* set up button to do a deal based on the current deal */
+        if (getIntent().getExtras() == null) {
+            throw new IllegalArgumentException("DetailView requires extras");
         }
+
+        mSharable = (Shareable) extras.getSerializable(Constants.SHAREABLE);
+
+        /* TODO Rework this so that I dont have to load placeholder initially */
+        mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
 
         /* set up button to do a deal based on the current deal */
-        if (mSharable != null) {
+        if (mSharable == null) {
+            throw new IllegalArgumentException("A shareable needs to be passed to the DetailView");
+        }
 
-            // check if user created item dont show item if user created it
-            if (mSharable.username.equals(UserProfile.getInstance().getUserName())) {
-                mButton.setVisibility(View.INVISIBLE);
-                didUserCreate = true;
-            }
-
-            // Tells us if offer or request
-            switch (mSharable.state_name) {
-            case Constants.REQ:
-            case Constants.REQ_OFR:
-                Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS A REQUEST");
-                mButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_offer));
-                mButton.setOnClickListener(offerClickListener);
-                break;
-            case Constants.OFR:
-            case Constants.OFR_REQ:
-                Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS AN OFFER");
-                mButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_request));
-                mButton.setOnClickListener(requestClickListener);
-                break;
-            }
-
-            NetworkService.get("/viewreqoffshareable?shar_id=" + mSharable.shar_id, null, new ShareWhereRespHandler() {
+        Log.d(this.getClass().getSimpleName(), "pic name " +
+                (mSharable.shar_pic_name != null ? mSharable.shar_pic_name : "null"));
+        if (mSharable.shar_pic_name != null && !mSharable.shar_pic_name.isEmpty()) {
+            ImageLoader.getInstance().loadImage(NetworkService.getImageURL(mSharable.shar_pic_name),
+            new SimpleImageLoadingListener() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
-                    if (logoutIfInvalidCookie(resp, ItemDetailActivity.this))
-                        return;
-
-                    try {
-                        boolean success = resp.getBoolean("success");
-                        if (!success)
-                            return;
-
-                        // Get sharable were looking at we dont really need this now
-                        //JSONObject shar = resp.getJSONObject("shareable");
-                        //Shareable s = gson.fromJson(shar.toString(), Shareable.class);
-
-                        // Created by user if list other user otherwise
-
-                        if (!resp.isNull("transactions")) {
-                            JSONArray ts = resp.getJSONArray("transactions");
-                            Type listType = new TypeToken<List<Transaction>>() {
-                            }.getType();
-                            mTransactions = gson.fromJson(ts.toString(), listType);
-                        }
-                        else if (!resp.isNull("transaction")) {
-                            JSONObject transaction = resp.getJSONObject("transaction");
-                            Transaction t = gson.fromJson(transaction.toString(), Transaction.class);
-                            shouldDisableAction = true;
-                        }
-
-                    } catch (JSONException e) {
-                        Log.wtf(this.getClass().getSimpleName(), "JSON Exception at viewoffreq");
-                    }
-
-                    if (shouldDisableAction) {
-                        mButton.setEnabled(false);
-                    }
-
-                    // show transactions
-                    if (didUserCreate) {
-                        mTransactionList.setVisibility(View.VISIBLE);
-                        mContentDetailLayout.setVisibility(View.INVISIBLE);
-                        if (mTransactions != null)
-                            mTransactionList.setAdapter(new TransactionAdapter(ItemDetailActivity.this, mTransactions));
-                    }
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    mImageView.setImageBitmap(loadedImage);
                 }
-                @Override
-                public void onFinish() {
-                }
-
             });
         }
+
+        // use shareable to set related text
+        getSupportActionBar().setTitle(mSharable.shar_name);
+        /* TODO: make so that if you created it that it will say 'you' */
+
+        // check if user created item dont show item if user created it
+        if (mSharable.username.equals(UserProfile.getInstance().getUserName())) {
+            mButton.setVisibility(View.INVISIBLE);
+            didUserCreate = true;
+        }
+
+        String typeName = "";
+
+        // Tells us if offer or request
+        switch (mSharable.state_name) {
+        case Constants.REQ:
+        case Constants.REQ_OFR:
+            isRequest = true;
+            break;
+        case Constants.OFR:
+        case Constants.OFR_REQ:
+            isRequest = false;
+            break;
+        }
+
+        if(isRequest) {
+            Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS A REQUEST");
+            mButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_offer));
+            mButton.setOnClickListener(offerClickListener);
+            typeName = "Requested";
+        }
+        else {
+            Log.i(ItemDetailActivity.class.getSimpleName(), "THIS IS AN OFFER");
+            mButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_request));
+            mButton.setOnClickListener(requestClickListener);
+            typeName = "Offered";
+        }
+
+        if(didUserCreate)
+            mCreator.setText(typeName + " by me");
+        else
+            mCreator.setText(typeName + " by " + mSharable.username);
+
+        mDescription.setText(mSharable.description);
+
+        NetworkService.get("/viewreqoffshareable?shar_id=" + mSharable.shar_id, null, new ShareWhereRespHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                if (logoutIfInvalidCookie(resp, ItemDetailActivity.this))
+                    return;
+
+                try {
+                    boolean success = resp.getBoolean("success");
+                    if (!success)
+                        return;
+
+                    // Get sharable were looking at we dont really need this now
+                    //JSONObject shar = resp.getJSONObject("shareable");
+                    //Shareable s = gson.fromJson(shar.toString(), Shareable.class);
+
+                    // Created by user if list other user otherwise
+
+                    if (!resp.isNull("transactions")) {
+                        JSONArray ts = resp.getJSONArray("transactions");
+                        Type listType = new TypeToken<List<Transaction>>() {
+                        }.getType();
+                        mTransactions = gson.fromJson(ts.toString(), listType);
+
+
+                        // for testing scrolling hehe
+                        /*for(int i = 0; i < 20; i++) {
+                            Transaction t = new Transaction();
+                            t.borrower = "Wow" + i;
+                            mTransactions.add(t);
+                        }*/
+
+                    }
+                    else if (!resp.isNull("transaction")) {
+                        JSONObject transaction = resp.getJSONObject("transaction");
+                        Transaction t = gson.fromJson(transaction.toString(), Transaction.class);
+                        shouldDisableAction = true;
+                    }
+
+                } catch (JSONException e) {
+                    Log.wtf(this.getClass().getSimpleName(), "JSON Exception at viewoffreq");
+                }
+
+                if (shouldDisableAction) {
+                    mButton.setEnabled(false);
+                }
+
+                // show transactions
+                if (didUserCreate) {
+                    mTransactionList.setVisibility(View.VISIBLE);
+                    mContentDetailLayout.setVisibility(View.INVISIBLE);
+
+                    if (mTransactions != null) {
+                        mTransactionList.setAdapter(new TransactionAdapter(ItemDetailActivity.this, mTransactions, isRequest));
+
+                        /* thanks http://stackoverflow.com/questions/15039913/android-how-to-measure-total-height-of-listview */
+                        ListAdapter mAdapter = mTransactionList.getAdapter();
+
+                        int totalHeight = 0;
+
+                        for (int i = 0; i < mAdapter.getCount(); i++) {
+                            View mView = mAdapter.getView(i, null, mTransactionList);
+
+                            mView.measure(
+                                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+
+                                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+                            totalHeight += mView.getMeasuredHeight();
+                        }
+
+                        ViewGroup.LayoutParams params = mTransactionList.getLayoutParams();
+                        params.height = totalHeight
+                                + (mTransactionList.getDividerHeight() * (mAdapter.getCount() - 1));
+                        mTransactionList.setLayoutParams(params);
+                        mNotifyScrollView.setScrollY(0);
+                        //mTransactionList.requestLayout();
+                    }
+                }
+            }
+            @Override
+            public void onFinish() {
+            }
+
+        }); // end network call bro
 
         // more setup
         setupNotifyScrollView();
@@ -205,11 +270,13 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
     public class TransactionAdapter extends ArrayAdapter<Transaction> {
         private final Context context;
         private final List<Transaction> transactions;
+        private boolean isRequest;
 
-        public TransactionAdapter(Context context, List<Transaction> transactions) {
+        public TransactionAdapter(Context context, List<Transaction> transactions, boolean isRequest) {
             super(context, R.layout.transaction_list_item, transactions);
             this.context = context;
             this.transactions = transactions;
+            this.isRequest = isRequest;
         }
 
         @Override
@@ -220,7 +287,10 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
             TextView textView = (TextView) rowView.findViewById(R.id.transaction_title);
             Transaction t = transactions.get(position);
 
-            textView.setText(t.borrower);
+            if(isRequest)
+                textView.setText(t.lender);
+            else
+                textView.setText(t.borrower);
 
             return rowView;
         }
@@ -309,6 +379,8 @@ public class ItemDetailActivity extends ActionBarActivity implements NotifyScrol
     public void onScrollChanged(int left, int top, int oldLeft, int oldTop) {
         // get scroll y
         int scrollY = mNotifyScrollView.getScrollY();
+
+        Log.d("", "Scrolling y " + scrollY);
 
         // calculate new y (for toolbar translation)
         float newY = Math.max(mImageView.getHeight(), scrollY);
