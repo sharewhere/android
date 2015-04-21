@@ -124,6 +124,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         float height = mContext.getResources().getDimension(R.dimen.item_image_height);
         ImageSize size = new ImageSize((int)(height*2), (int)height);
 
+        /* TODO: profile view circle image view is not being set. fix this */
+
         if(pic != null)
             ImageLoader.getInstance().loadImage(NetworkService.getImageURL(pic), size, new SimpleImageLoadingListener() {
                 @Override
