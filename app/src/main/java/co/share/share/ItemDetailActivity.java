@@ -17,11 +17,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -48,7 +50,7 @@ import co.share.share.views.NotifyScrollView;
 
 
 public class ItemDetailActivity extends ShareWhereActivity implements NotifyScrollView.Callback {
-
+    private final String TAG = getClass().getSimpleName();
     private NotifyScrollView mNotifyScrollView;
 
     private FrameLayout mImageFrameLayout;
@@ -285,12 +287,64 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.transaction_list_item, parent, false);
             TextView textView = (TextView) rowView.findViewById(R.id.transaction_title);
-            Transaction t = transactions.get(position);
+            ImageButton chat = (ImageButton) rowView.findViewById(R.id.chat_button);
+            ImageButton complete = (ImageButton) rowView.findViewById(R.id.complete_button);
+
+            final Transaction t = transactions.get(position);
 
             if(isRequest)
                 textView.setText(t.lender);
             else
                 textView.setText(t.borrower);
+
+            chat.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast t = Toast.makeText(context, "Chat not implemented", Toast.LENGTH_SHORT);
+                    t.show();
+                }
+            });
+
+            complete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RequestParams params = new RequestParams();
+
+                    params.put("transID", t.trans_id);
+
+                    NetworkService.post("/completeshareable", params, new ShareWhereRespHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                            if(logoutIfInvalidCookie(resp, ItemDetailActivity.this))
+                                return;
+
+                            boolean success = false;
+                            try {
+                                success = resp.getBoolean("success");
+                            } catch(JSONException e)
+                            {
+                                Log.wtf(TAG, "Failed to get request");
+                                return;
+                            }
+
+                            if(!success) {
+                                String error = null;
+                                try {
+                                    error = resp.getString("error_message");
+                                } catch (JSONException e) {
+                                    Log.wtf(TAG, "No error message");
+                                    return;
+                                }
+                                Log.d(TAG, "Shareable failed to complete " + error);
+                            } else
+                            {
+                                Log.d(TAG, "Shareable completed");
+                            }
+                        }
+                    });
+                }
+
+            });
 
             return rowView;
         }

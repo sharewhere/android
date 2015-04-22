@@ -5,11 +5,11 @@ import java.util.Date;
 public class Transaction {
 
     /* gotta go fast */
-    public int transation_id;
+    public int trans_id;
     public String lender;
     public String borrower;
     public int shar_id;
     public String description;
-    public String tranaction_type;
+    public String transaction_type;
 
 }
