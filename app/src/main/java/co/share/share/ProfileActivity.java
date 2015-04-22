@@ -29,6 +29,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
 import co.share.share.net.NetworkService;
+import co.share.share.util.UserProfile;
 import co.share.share.views.NotifyScrollView;
 
 public class ProfileActivity extends ActionBarActivity implements NotifyScrollView.Callback {
@@ -78,7 +79,8 @@ public class ProfileActivity extends ActionBarActivity implements NotifyScrollVi
         *   query user profile from api here
         */
         mImageView.setImageDrawable(getResources().getDrawable(R.drawable.placeholder));
-        getSupportActionBar().setTitle("Profile");
+
+        getSupportActionBar().setTitle(UserProfile.getInstance().getUserName() + "'s Profile");
 
 
         setupNotifyScrollView();
@@ -154,7 +156,7 @@ public class ProfileActivity extends ActionBarActivity implements NotifyScrollVi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_item_detail, menu);
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
         return true;
     }
 

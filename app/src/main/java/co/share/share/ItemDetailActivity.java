@@ -229,7 +229,7 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                     mTransactionList.setVisibility(View.VISIBLE);
                     mContentDetailLayout.setVisibility(View.INVISIBLE);
 
-                    if (mTransactions != null) {
+                    if (mTransactions != null && mTransactions.size() > 0) {
                         mTransactionList.setAdapter(new TransactionAdapter(ItemDetailActivity.this, mTransactions, isRequest));
 
                         /* thanks http://stackoverflow.com/questions/15039913/android-how-to-measure-total-height-of-listview */
@@ -254,6 +254,13 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                         mTransactionList.setLayoutParams(params);
                         mNotifyScrollView.setScrollY(0);
                         //mTransactionList.requestLayout();
+                    } else {
+                        mTransactionList.setVisibility(View.INVISIBLE);
+                        mContentDetailLayout.setVisibility(View.VISIBLE);
+                        if(mSharable.getSharableType() == Constants.CreateType.OFFER)
+                            mDescription.setText("You have no requests yet!");
+                        else
+                            mDescription.setText("You have no offers yet!");
                     }
                 }
             }

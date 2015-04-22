@@ -30,6 +30,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private View.OnClickListener clickListener;
     private boolean isProfileView;
 
+    public int itemHeight;
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -92,6 +94,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         // to prevent stale images from being displayed, unset the image initially
         holder.mImageView.setImageBitmap(null);
 
@@ -147,4 +150,5 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public int getItemCount() {
         return mDataset.size();
     }
+
 }

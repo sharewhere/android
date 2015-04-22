@@ -29,6 +29,7 @@ import co.share.share.ItemDetailActivity;
 import co.share.share.ProfileActivity;
 import co.share.share.R;
 import co.share.share.ShareWhereActivity;
+import co.share.share.models.Item;
 import co.share.share.models.Shareable;
 import co.share.share.net.NetworkService;
 import co.share.share.net.ShareWhereRespHandler;
@@ -143,6 +144,21 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
                  } catch (JSONException e) {
                     Log.wtf(this.getClass().getSimpleName(), "JSON Exception at offers");
                  }
+
+                 int height = 0;
+
+                 /*
+                 if (userProfile) {
+                     for (int i = 0; i < mRecyclerView.getLayoutManager().getItemCount(); i++) {
+                         v.measure(
+                                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                         height += v.getHeight();
+                     }
+                     Log.i("height", "" + height);
+                 }
+                 */
+
              }
 
              @Override
