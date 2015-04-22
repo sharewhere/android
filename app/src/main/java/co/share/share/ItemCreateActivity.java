@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -51,7 +52,7 @@ import co.share.share.views.FloatingActionButton;
 
 
 public class ItemCreateActivity extends ShareWhereActivity {
-
+    private final String TAG = this.getClass().getSimpleName();
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final String UPLOAD_FILE_NAME = "upload.jpg";
 
@@ -259,6 +260,44 @@ public class ItemCreateActivity extends ShareWhereActivity {
         mImageView.setImageBitmap(bitmap);
     }
 
+    private void resizeCameraImage()
+    {
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentImagePath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/600, photoH/600);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentImagePath, bmOptions);
+
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = new File(storageDir, UPLOAD_FILE_NAME);
+
+        try {
+            FileOutputStream fOut = new FileOutputStream(image);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+
+            fOut.flush();
+            fOut.close();
+        }
+        catch(IOException e)
+        {
+            Log.d(TAG, "Failed to compress and resize image");
+        }
+        finally {
+            bitmap.recycle();
+            bitmap = null;
+        }
+    }
+
     private String convertToServerDate(String input)
     {
         if(input.equals(""))
@@ -340,6 +379,8 @@ public class ItemCreateActivity extends ShareWhereActivity {
             s.end_date = convertToServerDate(s.end_date);
             params.put("end_date", s.end_date);
         }
+
+        resizeCameraImage();
 
         try {
             params.put("picture", new FileInputStream(mImageFile));
