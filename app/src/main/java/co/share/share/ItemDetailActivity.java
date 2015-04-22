@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -365,9 +366,15 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
             params.add("shar_id", "" + mSharable.shar_id);
             //params.add("description", "I'll decide later");
 
-            NetworkService.post("/offeronrequest", params, new ShareWhereRespHandler() {
+            NetworkService.post("/offeronrequest", params, new AsyncHttpResponseHandler() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    mButton.setEnabled(false);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
                 }
             });
 
@@ -382,9 +389,16 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
             params.add(Constants.SHAR_ID, "" + mSharable.shar_id);
             //params.add("description", "I'll decide later");
 
-            NetworkService.post("/requestonoffer", params, new ShareWhereRespHandler() {
+            NetworkService.post("/requestonoffer", params, new AsyncHttpResponseHandler() {
+
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    mButton.setEnabled(false);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
                 }
             });
         }

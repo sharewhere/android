@@ -164,7 +164,9 @@ public class MainActivity extends ShareWhereActivity {
 
         switch(id) {
             case R.id.action_settings:
-                mlg_active();
+                //mlg_active();
+                Intent s = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(s);
                 return true;
             case R.id.action_logout:
                 logout();

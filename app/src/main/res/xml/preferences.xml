@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Account"
+        android:key="Account" >
+
+        <Preference
+            android:key="sign_out"
+            android:title="Sign Out"
+            android:summary="Get urself out of here."/>
+
+        <Preference
+            android:key="clear_cache"
+            android:title="Clear Cache"
+            android:summary="Sooooo Cache"/>
+
+        <EditTextPreference
+            android:key="endpoint"
+            android:title="Change Endpoint"
+            android:summary="Are you debuggin?"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Developer">
+
+        <Preference
+            android:key="licenses_preference"
+            android:title="Open Source Licenses"
+            android:summary="ShareWhere is mad open source check it son."/>
+
+    </PreferenceCategory>
+</PreferenceScreen>
