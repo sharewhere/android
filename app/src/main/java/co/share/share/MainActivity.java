@@ -94,7 +94,7 @@ public class MainActivity extends ShareWhereActivity {
                     .defaultDisplayImageOptions(defaultOptions)
                     .diskCacheSize(50 * 1024 * 1024)
                     .memoryCacheSize(20 * 1024 * 1024)
-                    .writeDebugLogs()
+                    //.writeDebugLogs()
                     .build();
             ImageLoader.getInstance().init(config);
         }
