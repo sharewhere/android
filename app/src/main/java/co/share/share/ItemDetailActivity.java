@@ -67,6 +67,8 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
     private ImageView mImageView;
     private TextView mDescription;
     private TextView mCreator;
+    private TextView mTransactionsNone;
+    private TextView mTransactionsTitle;
 
     private Shareable mSharable = null;
     private List<Transaction> mTransactions;
@@ -94,6 +96,8 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
         mImageView = (ImageView) findViewById(R.id.image_view);
         mDescription = (TextView) findViewById(R.id.description);
         mCreator = (TextView) findViewById(R.id.creator);
+        mTransactionsNone = (TextView) findViewById(R.id.transactions_none);
+        mTransactionsTitle = (TextView) findViewById(R.id.transactions_title);
 
         mContentLinearLayout = (LinearLayout) findViewById(R.id.content_linear_layout);
 
@@ -207,9 +211,9 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                         }.getType();
                         mTransactions = gson.fromJson(ts.toString(), listType);
 
-
+/*
                         // for testing scrolling hehe
-                        /*for(int i = 0; i < 20; i++) {
+                        for(int i = 0; i < 20; i++) {
                             Transaction t = new Transaction();
                             t.borrower = "Wow" + i;
                             mTransactions.add(t);
@@ -232,10 +236,12 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
 
                 // show transactions
                 if (didUserCreate) {
-                    mTransactionList.setVisibility(View.VISIBLE);
-                    mContentDetailLayout.setVisibility(View.INVISIBLE);
+
+                    mTransactionsTitle.setVisibility(View.VISIBLE);
 
                     if (mTransactions != null && mTransactions.size() > 0) {
+                        mTransactionList.setVisibility(View.VISIBLE);
+                        mTransactionsNone.setVisibility(View.GONE);
                         mTransactionList.setAdapter(new TransactionAdapter(ItemDetailActivity.this, mTransactions, isRequest));
 
                         /* thanks http://stackoverflow.com/questions/15039913/android-how-to-measure-total-height-of-listview */
@@ -262,11 +268,12 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                         //mTransactionList.requestLayout();
                     } else {
                         mTransactionList.setVisibility(View.INVISIBLE);
-                        mContentDetailLayout.setVisibility(View.VISIBLE);
+                        mTransactionsNone.setVisibility(View.VISIBLE);
+
                         if(mSharable.getSharableType() == Constants.CreateType.OFFER)
-                            mDescription.setText("You have no requests yet!");
+                            mTransactionsNone.setText("You have no requests yet!");
                         else
-                            mDescription.setText("You have no offers yet!");
+                            mTransactionsNone.setText("You have no offers yet!");
                     }
                 }
             }
@@ -300,6 +307,7 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.transaction_list_item, parent, false);
             TextView textView = (TextView) rowView.findViewById(R.id.transaction_title);
+            TextView subTitle = (TextView) rowView.findViewById(R.id.transaction_subtitle);
             final RelativeLayout parentActionView = (RelativeLayout) rowView.findViewById(R.id.transaction_actions);
             final ImageButton chat = (ImageButton) rowView.findViewById(R.id.chat_button);
             final ImageButton complete = (ImageButton) rowView.findViewById(R.id.complete_button);
@@ -322,6 +330,15 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                 textView.setText(t.lender);
             else
                 textView.setText(t.borrower);
+
+            if(t.trans_creation_date != null)
+            {
+                subTitle.setText(t.trans_creation_date);
+            }
+            else
+            {
+                subTitle.setText("");
+            }
 
             chat.setOnClickListener(new View.OnClickListener() {
                 @Override

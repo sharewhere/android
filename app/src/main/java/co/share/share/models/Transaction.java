@@ -11,5 +11,5 @@ public class Transaction {
     public int shar_id;
     public String description;
     public String transaction_type;
-
+    public String trans_creation_date;
 }
