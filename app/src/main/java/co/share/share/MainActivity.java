@@ -31,19 +31,21 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import co.share.share.fragments.OffersFragment;
 import co.share.share.fragments.RequestsFragment;
+import co.share.share.net.NetworkService;
 import co.share.share.util.Constants;
 import co.share.share.util.UserProfile;
 
 public class MainActivity extends ShareWhereActivity {
     private final String TAG = this.getClass().getSimpleName();
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private SearchView mSearchView;
 
     private MediaPlayer mMediaPlayer;
+    private ArrayList<ViewSwitcher> mMlgSwitchedViews;
     private boolean mMlgActive;
 
     @Override
@@ -56,7 +58,7 @@ public class MainActivity extends ShareWhereActivity {
         UserProfile.getInstance().setUserName(username);
 
         // check if we are still logged in!
-        if(!isLoggedin())
+        if(!NetworkService.isLoggedin())
             doLogin();
     }
 
@@ -74,7 +76,7 @@ public class MainActivity extends ShareWhereActivity {
         super.onCreate(savedInstanceState);
 
         // check to see if the cookie exists, otherwise login
-        if(!isLoggedin())
+        if(!NetworkService.isLoggedin())
             doLogin();
 
         if(mMediaPlayer == null)
@@ -90,9 +92,9 @@ public class MainActivity extends ShareWhereActivity {
                     .build();
             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                     .defaultDisplayImageOptions(defaultOptions)
-                    .memoryCacheSize(5*1024*1024)
-                    .diskCacheSize(50*1024*1024)
-                    //.writeDebugLogs()
+                    .diskCacheSize(50 * 1024 * 1024)
+                    .memoryCacheSize(20 * 1024 * 1024)
+                    .writeDebugLogs()
                     .build();
             ImageLoader.getInstance().init(config);
         }
@@ -115,9 +117,6 @@ public class MainActivity extends ShareWhereActivity {
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.color_primary_dark));
-
         // floating action button
         findViewById(R.id.action_offer).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,13 +135,6 @@ public class MainActivity extends ShareWhereActivity {
                 startActivity(intent);
             }
         });
-
-        ListView mDrawerList = (ListView) findViewById(R.id.drawer_list);
-        String[] values = {"Browse", "Share", "Borrow", "Requested"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
-        mDrawerList.setAdapter(adapter);
-
     }
 
     @Override
@@ -167,6 +159,9 @@ public class MainActivity extends ShareWhereActivity {
                 //mlg_active();
                 Intent s = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(s);
+                return true;
+            case R.id.action_illuminati:
+                mlg_active();
                 return true;
             case R.id.action_logout:
                 logout();
@@ -194,32 +189,50 @@ public class MainActivity extends ShareWhereActivity {
         final OffersFragment offers = (OffersFragment) a.instantiateItem(pager, 0);
         final RequestsFragment req = (RequestsFragment) a.instantiateItem(pager, 1);
 
-        mlgSwitchViews(offers.getRecycler());
-        mlgSwitchViews(req.getRecycler());
-
-        mMediaPlayer.start();
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                mlgSwitchViews(offers.getRecycler());
-                mlgSwitchViews(req.getRecycler());
+                mlgSwitchViewsBack(mMlgSwitchedViews);
                 mMlgActive = false;
             }
         });
+
+        mMediaPlayer.seekTo(0); // heat it up
+        mMediaPlayer.start();
+
+        mMlgSwitchedViews = mlgSwitchViews(offers.getRecycler());
+        mMlgSwitchedViews.addAll(mlgSwitchViews(req.getRecycler()));
     }
 
-    private void mlgSwitchViews(RecyclerView recycler)
+    private ArrayList<ViewSwitcher> mlgSwitchViews(RecyclerView recycler)
     {
+        ArrayList<ViewSwitcher> switched = new ArrayList<>(recycler.getChildCount());
+
         for(int i = 0; i < recycler.getChildCount(); i++) {
             View v = recycler.getChildAt(i);
+
+            if(v == null)
+                continue;
 
             v = v.findViewById(R.id.list_item_switch);
 
             if(v != null) {
                 ViewSwitcher sw = (ViewSwitcher)v;
+                switched.add(sw);
                 sw.showNext();
             }
         }
+
+        return switched;
+    }
+
+    private void mlgSwitchViewsBack(ArrayList<ViewSwitcher> switched)
+    {
+        for(ViewSwitcher v : switched)
+            if(v != null)
+                v.setDisplayedChild(0);
+
+        switched.clear();
     }
 
     private void doLogin()
@@ -227,13 +240,6 @@ public class MainActivity extends ShareWhereActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    private class ActiveItemClickListener implements AbsListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        }
     }
 
     public class PagerAdapter extends FragmentStatePagerAdapter {

@@ -455,8 +455,6 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
         // get scroll y
         int scrollY = mNotifyScrollView.getScrollY();
 
-        Log.d("", "Scrolling y " + scrollY);
-
         // calculate new y (for toolbar translation)
         float newY = Math.max(mImageView.getHeight(), scrollY);
 

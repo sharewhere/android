@@ -9,6 +9,12 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.protocol.HttpContext;
+
+import java.util.List;
+
 // cookie name is connect.sid
 
 public class NetworkService {
@@ -26,6 +32,29 @@ public class NetworkService {
 
     public static void post(String rel, RequestParams param, AsyncHttpResponseHandler handler) {
         client.post(getAbsURL(rel), param, handler);
+    }
+
+    public static PersistentCookieStore getCookies() {
+        HttpContext ctx = NetworkService.getInstance().getHttpContext();
+        PersistentCookieStore cookies = (PersistentCookieStore) ctx.getAttribute(ClientContext.COOKIE_STORE);
+
+        return cookies;
+    }
+
+    public static boolean isLoggedin()
+    {
+        // TODO: check network
+        PersistentCookieStore storage = getCookies();
+        List<Cookie> cookies = storage.getCookies();
+
+        for(Cookie c : cookies)
+        {
+            if(c.getName().equals("connect.sid")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static String getImageURL(String imageName)

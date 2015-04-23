@@ -7,19 +7,14 @@
         android:key="Account" >
 
         <Preference
-            android:key="sign_out"
-            android:title="Sign Out"
-            android:summary="Get urself out of here."/>
+            android:key="clear_cookies"
+            android:title="Clear Cookies"
+            android:summary="Invalidate all cookies. You will be logged out on refresh"/>
 
         <Preference
             android:key="clear_cache"
-            android:title="Clear Cache"
-            android:summary="Sooooo Cache"/>
-
-        <EditTextPreference
-            android:key="endpoint"
-            android:title="Change Endpoint"
-            android:summary="Are you debuggin?"/>
+            android:title="Clear Image Cache"
+            android:summary="Force image redownload."/>
 
     </PreferenceCategory>
 
