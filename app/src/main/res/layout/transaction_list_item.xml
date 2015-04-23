@@ -29,20 +29,20 @@
             android:text="transaction_subtitle"
             android:id="@+id/transaction_subtitle"
             android:layout_marginTop="-2dp" />
-
-
     </LinearLayout>
     <RelativeLayout
+        android:id="@+id/transaction_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
+        android:paddingTop="14dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="14dp"
         android:layout_alignParentRight="true">
         <ImageButton
             android:id="@+id/chat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
             android:text="Chat"
             android:src="@drawable/ic_chat"
             android:background="@android:color/transparent" />
@@ -50,8 +50,9 @@
             android:id="@+id/complete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Complete"
+            android:text="@string/action_complete"
             android:src="@drawable/ic_action_done_blk"
+            android:layout_marginLeft="20dp"
             android:background="@android:color/transparent"
             android:layout_toRightOf="@id/chat_button"/>
     </RelativeLayout>

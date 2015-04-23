@@ -1,7 +1,9 @@
 package co.share.share;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +49,8 @@ import co.share.share.models.Transaction;
 import co.share.share.net.NetworkService;
 import co.share.share.net.ShareWhereRespHandler;
 import co.share.share.util.Constants;
+import co.share.share.util.TouchDelegateComposite;
+import co.share.share.util.TouchExtender;
 import co.share.share.util.UserProfile;
 import co.share.share.views.NotifyScrollView;
 
@@ -295,8 +300,21 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.transaction_list_item, parent, false);
             TextView textView = (TextView) rowView.findViewById(R.id.transaction_title);
-            ImageButton chat = (ImageButton) rowView.findViewById(R.id.chat_button);
-            ImageButton complete = (ImageButton) rowView.findViewById(R.id.complete_button);
+            final RelativeLayout parentActionView = (RelativeLayout) rowView.findViewById(R.id.transaction_actions);
+            final ImageButton chat = (ImageButton) rowView.findViewById(R.id.chat_button);
+            final ImageButton complete = (ImageButton) rowView.findViewById(R.id.complete_button);
+
+            final TouchDelegateComposite newTouches = new TouchDelegateComposite(parentActionView);
+
+            // only make new delegates when the parent has already been layed out
+            parentActionView.post(new Runnable() {
+                @Override
+                public void run() {
+                    newTouches.newDelegate(chat, 30);
+                    newTouches.newDelegate(complete, 20);
+                    parentActionView.setTouchDelegate(newTouches);
+                }
+            });
 
             final Transaction t = transactions.get(position);
 
@@ -316,46 +334,65 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
             complete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RequestParams params = new RequestParams();
-
-                    params.put("transID", t.trans_id);
-
-                    NetworkService.post("/completeshareable", params, new ShareWhereRespHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
-                            if(logoutIfInvalidCookie(resp, ItemDetailActivity.this))
-                                return;
-
-                            boolean success = false;
-                            try {
-                                success = resp.getBoolean("success");
-                            } catch(JSONException e)
-                            {
-                                Log.wtf(TAG, "Failed to get request");
-                                return;
-                            }
-
-                            if(!success) {
-                                String error = null;
-                                try {
-                                    error = resp.getString("error_message");
-                                } catch (JSONException e) {
-                                    Log.wtf(TAG, "No error message");
-                                    return;
-                                }
-                                Log.d(TAG, "Shareable failed to complete " + error);
-                            } else
-                            {
-                                Log.d(TAG, "Shareable completed");
-                            }
-                        }
-                    });
+                    completeShareable(t);
                 }
 
             });
 
             return rowView;
         }
+    }
+
+    private void completeShareable(final Transaction t) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.alert_complete)
+                .setPositiveButton(R.string.action_complete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        completeShareableNet(t);
+                    }
+                })
+                .setNegativeButton(R.string.action_cancel, null);
+        builder.create().show();
+    }
+
+    private void completeShareableNet(Transaction t)
+    {
+        RequestParams params = new RequestParams();
+
+        params.put("transID", t.trans_id);
+
+        NetworkService.post("/completeshareable", params, new ShareWhereRespHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject resp) {
+                if(logoutIfInvalidCookie(resp, ItemDetailActivity.this))
+                    return;
+
+                boolean success = false;
+                try {
+                    success = resp.getBoolean("success");
+                } catch(JSONException e)
+                {
+                    Log.wtf(TAG, "Failed to get request");
+                    return;
+                }
+
+                if(!success) {
+                    String error = null;
+                    try {
+                        error = resp.getString("error_message");
+                    } catch (JSONException e) {
+                        Log.wtf(TAG, "No error message");
+                        return;
+                    }
+                    Log.d(TAG, "Shareable failed to complete " + error);
+                } else
+                {
+                    Log.d(TAG, "Shareable completed");
+
+                }
+            }
+        });
     }
 
     private View.OnClickListener offerClickListener = new View.OnClickListener() {
