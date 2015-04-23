@@ -1,7 +1,10 @@
 <co.share.share.views.NotifyScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/notify_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:background="@color/color_background">
 
     <FrameLayout
@@ -18,7 +21,7 @@
             <ImageView
                 android:id="@+id/image_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="250dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:contentDescription="@string/app_name" />
@@ -33,15 +36,65 @@
             android:orientation="vertical"
             android:background="@color/color_background">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/loerm"
-                android:textColor="@color/color_text"
-                android:id="@+id/content_textview"
-                android:layout_marginTop="@dimen/keyline_1_minus_8dp"
-                android:layout_marginLeft="@dimen/keyline_2"
-                android:layout_marginRight="@dimen/keyline_1_minus_8dp"/>
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/content_detail_layout"
+                    android:layout_centerInParent="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="Description"
+                        android:textSize="18dp"
+                        android:layout_marginTop="@dimen/keyline_1_minus_8dp"
+                        android:layout_marginLeft="@dimen/keyline_1"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@color/color_text"
+                        android:id="@+id/description"
+                        android:layout_marginTop="@dimen/keyline_1_minus_8dp"
+                        android:layout_marginLeft="@dimen/keyline_2"
+                        android:layout_marginRight="@dimen/keyline_2"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="Responses"
+                        android:textSize="18dp"
+                        android:id="@+id/transactions_title"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/keyline_1"
+                        android:layout_marginLeft="@dimen/keyline_1"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No transactions"
+                        android:textColor="@color/color_text"
+                        android:id="@+id/transactions_none"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/keyline_1_minus_8dp"
+                        android:layout_marginLeft="@dimen/keyline_2"
+                        android:layout_marginRight="@dimen/keyline_2"/>
+                <ListView
+                    android:id="@+id/transaction_list"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+                </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
 
@@ -55,7 +108,55 @@
             android:clipToPadding="false"
             android:background="@color/color_primary">
 
-            <include layout="@layout/toolbar_main" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:paddingTop="-35dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_height="wrap_content">
+
+
+                <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/toolbar_main"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:minHeight="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:contentInsetStart="@dimen/keyline_2"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_colorNormal="@color/pink"
+                    app:fab_colorPressed="@color/pink_pressed"
+                    android:layout_alignTop="@id/toolbar_main"
+                    android:layout_marginTop="-35dp"
+                    android:layout_marginRight="@dimen/keyline_1_minus_8dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_gravity="right"
+                    android:elevation="20dp"
+                />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User"
+                android:textColor="@color/white"
+                android:id="@+id/creator"
+                android:layout_marginBottom="@dimen/keyline_1"
+                android:layout_marginLeft="@dimen/keyline_2"
+                android:layout_marginRight="@dimen/keyline_2"/>
+
+
+            <!-- TODO make this on the top of the ab -->
 
         </LinearLayout>
 

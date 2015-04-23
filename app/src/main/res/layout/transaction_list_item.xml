@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/keyline_2"
+        android:layout_marginTop="16dp"
+        android:layout_centerVertical="true"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/transaction_title"
+            android:text="transaction_title"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:ellipsize="end"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="transaction_subtitle"
+            android:id="@+id/transaction_subtitle"
+            android:layout_marginTop="-2dp" />
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/transaction_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="14dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="14dp"
+        android:layout_alignParentRight="true">
+        <ImageButton
+            android:id="@+id/chat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat"
+            android:src="@drawable/ic_chat"
+            android:background="@android:color/transparent" />
+        <ImageButton
+            android:id="@+id/complete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_complete"
+            android:src="@drawable/ic_action_done_blk"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/transparent"
+            android:layout_toRightOf="@id/chat_button"/>
+    </RelativeLayout>
+</RelativeLayout>

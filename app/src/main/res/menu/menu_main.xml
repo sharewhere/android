@@ -5,10 +5,23 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item android:id="@+id/action_illuminati"
+        android:title="@string/action_illuminati"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
     <item android:id="@+id/action_search"
         android:title="@string/action_search"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:icon="@drawable/ic_action_search"
         app:showAsAction="ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
+    <item android:id="@+id/action_profile"
+        android:title="Profile"
+        android:orderInCategory="400"
+        android:icon="@drawable/ic_profile"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_logout"
+        android:title="@string/action_logout"
+        android:orderInCategory="500"
+        app:showAsAction="never" />
 </menu>

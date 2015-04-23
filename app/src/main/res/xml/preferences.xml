@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Account"
+        android:key="Account" >
+
+        <Preference
+            android:key="clear_cookies"
+            android:title="Clear Cookies"
+            android:summary="Invalidate all cookies. You will be logged out on refresh"/>
+
+        <Preference
+            android:key="clear_cache"
+            android:title="Clear Image Cache"
+            android:summary="Force image redownload."/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Developer">
+
+        <Preference
+            android:key="licenses_preference"
+            android:title="Open Source Licenses"
+            android:summary="ShareWhere is mad open source check it son."/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

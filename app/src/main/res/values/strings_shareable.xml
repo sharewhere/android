@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_invalid_sharable_name">Shareable name invalid</string>
+    <string name="error_invalid_description">Shareable description too short</string>
+    <string name="error_missing_sharable_pic">Shareable must have a picture</string>
+</resources>
