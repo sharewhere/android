@@ -263,9 +263,17 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                         ViewGroup.LayoutParams params = mTransactionList.getLayoutParams();
                         params.height = totalHeight
                                 + (mTransactionList.getDividerHeight() * (mAdapter.getCount() - 1));
+
                         mTransactionList.setLayoutParams(params);
+                        mTransactionList.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mNotifyScrollView.setScrollY(0);
+                            }
+                        });
+
+                        mTransactionList.requestLayout();
                         mNotifyScrollView.setScrollY(0);
-                        //mTransactionList.requestLayout();
                     } else {
                         mTransactionList.setVisibility(View.INVISIBLE);
                         mTransactionsNone.setVisibility(View.VISIBLE);
@@ -286,7 +294,6 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
         // more setup
         setupNotifyScrollView();
         setupToolbar();
-
     }
 
     public class TransactionAdapter extends ArrayAdapter<Transaction> {
@@ -406,6 +413,7 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                 } else
                 {
                     Log.d(TAG, "Shareable completed");
+
 
                 }
             }
