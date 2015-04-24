@@ -260,7 +260,7 @@ public class ItemCreateActivity extends ShareWhereActivity {
         mImageView.setImageBitmap(bitmap);
     }
 
-    private void resizeCameraImage()
+    private boolean resizeCameraImage()
     {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
@@ -287,10 +287,14 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
             fOut.flush();
             fOut.close();
+
+            return true;
         }
         catch(IOException e)
         {
             Log.d(TAG, "Failed to compress and resize image");
+
+            return false;
         }
         finally {
             bitmap.recycle();
@@ -380,7 +384,8 @@ public class ItemCreateActivity extends ShareWhereActivity {
             params.put("end_date", s.end_date);
         }
 
-        resizeCameraImage();
+        if(!resizeCameraImage())
+            return;
 
         try {
             params.put("picture", new FileInputStream(mImageFile));
@@ -409,8 +414,10 @@ public class ItemCreateActivity extends ShareWhereActivity {
 
                 try {
                     boolean success = resp.getBoolean("success");
-                    if (!success)
+                    if (!success) {
+                        Log.wtf(TAG, "Shareable failed to be created (success != true)");
                         return;
+                    }
 
                 } catch (JSONException e) {
                     Log.wtf(this.getClass().getSimpleName(), "JSON Exception in ItemCreateActivity");
