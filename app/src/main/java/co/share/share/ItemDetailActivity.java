@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
@@ -132,8 +133,6 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
             throw new IllegalArgumentException("A shareable needs to be passed to the DetailView");
         }
 
-        Log.d(this.getClass().getSimpleName(), "pic name " +
-                (mSharable.shar_pic_name != null ? mSharable.shar_pic_name : "null"));
         if (mSharable.shar_pic_name != null && !mSharable.shar_pic_name.isEmpty()) {
             ImageLoader.getInstance().loadImage(NetworkService.getImageURL(mSharable.shar_pic_name),
             new SimpleImageLoadingListener() {
@@ -146,7 +145,6 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
 
         // use shareable to set related text
         getSupportActionBar().setTitle(mSharable.shar_name);
-        /* TODO: make so that if you created it that it will say 'you' */
 
         // check if user created item dont show item if user created it
         if (mSharable.username.equals(UserProfile.getInstance().getUserName())) {
@@ -274,6 +272,7 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
 
                         mTransactionList.requestLayout();
                         mNotifyScrollView.setScrollY(0);
+
                     } else {
                         mTransactionList.setVisibility(View.INVISIBLE);
                         mTransactionsNone.setVisibility(View.VISIBLE);
@@ -413,8 +412,12 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                 } else
                 {
                     Log.d(TAG, "Shareable completed");
+                    Toast completed = Toast.makeText(getApplicationContext(), R.string.notice_completed, Toast.LENGTH_SHORT);
+                    completed.show();
 
-
+                    //Intent intent = new Intent();
+                    setResult(RESULT_OK, null);
+                    finish();
                 }
             }
         });
@@ -432,6 +435,10 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     mButton.setEnabled(false);
+
+                    //Log.d(TAG, "Shareable completed");
+                    Toast completed = Toast.makeText(getApplicationContext(), "Shareable offered", Toast.LENGTH_SHORT);
+                    completed.show();
                 }
 
                 @Override
@@ -456,6 +463,8 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     mButton.setEnabled(false);
+                    Toast completed = Toast.makeText(getApplicationContext(), "Shareable requested", Toast.LENGTH_SHORT);
+                    completed.show();
                 }
 
                 @Override
@@ -471,33 +480,39 @@ public class ItemDetailActivity extends ShareWhereActivity implements NotifyScro
         mNotifyScrollView.setCallback(this);
 
         ViewTreeObserver viewTreeObserver = mNotifyScrollView.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    // get size
-                    int toolbarLinearLayoutHeight = mToolbarLinearLayout.getHeight();
-                    int imageHeight = mImageView.getHeight();
-
-                    // adjust image frame layout height
-                    ViewGroup.LayoutParams layoutParams = mImageFrameLayout.getLayoutParams();
-                    if (layoutParams.height != imageHeight) {
-                        layoutParams.height = imageHeight;
-                        mImageFrameLayout.setLayoutParams(layoutParams);
-                    }
-
-                    // adjust top margin of content linear layout
-                    ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) mContentLinearLayout.getLayoutParams();
-                    if (marginLayoutParams.topMargin != toolbarLinearLayoutHeight + imageHeight) {
-                        marginLayoutParams.topMargin = toolbarLinearLayoutHeight + imageHeight;
-                        mContentLinearLayout.setLayoutParams(marginLayoutParams);
-                    }
-
-                    // call onScrollChange to update initial properties.
-                    onScrollChanged(0, 0, 0, 0);
-                }
-            });
+        if (!viewTreeObserver.isAlive()) {
+            Log.d(TAG, "TreeObserver is dead");
+            return;
         }
+
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // get size
+                int toolbarLinearLayoutHeight = mToolbarLinearLayout.getHeight();
+                int imageHeight = mImageView.getHeight();
+
+                // adjust image frame layout height
+                ViewGroup.LayoutParams layoutParams = mImageFrameLayout.getLayoutParams();
+                if (layoutParams.height != imageHeight) {
+                    Log.d(TAG, "Layout = imageHeight (" + imageHeight + ")");
+                    layoutParams.height = imageHeight;
+                    mImageFrameLayout.setLayoutParams(layoutParams);
+                }
+
+                // adjust top margin of content linear layout
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) mContentLinearLayout.getLayoutParams();
+                if (marginLayoutParams.topMargin != toolbarLinearLayoutHeight + imageHeight) {
+                    Log.d(TAG, "Margin Layout top = toolbarLineraLayoutHeight + imageHeight");
+                    marginLayoutParams.topMargin = toolbarLinearLayoutHeight + imageHeight;
+                    mContentLinearLayout.setLayoutParams(marginLayoutParams);
+                }
+
+                // call onScrollChange to update initial properties.
+                Log.d(TAG, "Setting initial scroll to zero");
+                onScrollChanged(0, 0, 0, 0);
+            }
+        });
     }
 
     private void setupToolbar() {
