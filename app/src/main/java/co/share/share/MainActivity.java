@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,6 +136,17 @@ public class MainActivity extends ShareWhereActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent)
+    {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        Log.d(TAG, "Got result " + resultCode + ", request "  + requestCode);
+        if(requestCode == 50)
+        {
+            Log.d("test", "Got result " + resultCode);
+        }
     }
 
     @Override

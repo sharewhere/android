@@ -17,6 +17,8 @@ import java.util.List;
 import co.share.share.net.NetworkService;
 
 public class ShareWhereActivity extends ActionBarActivity {
+    public static final int REQUEST_REFRESH = 50;
+    public static final int REFRESH = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

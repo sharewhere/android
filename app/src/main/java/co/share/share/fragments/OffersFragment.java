@@ -95,7 +95,6 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-
         // use a linear layout manager
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -103,8 +102,9 @@ public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void onClick(View v) {
                 Intent d = new Intent(getActivity(), ItemDetailActivity.class);
-                // put extras!
-                startActivity(d);
+
+                //startActivity(d);
+                startActivityForResult(d, 1);
             }
         });
 
