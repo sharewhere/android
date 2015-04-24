@@ -11,3 +11,9 @@ git clone https://github.com/sharewhere/android.git
 
 * From Android Studio `File > Import Project` and select the `build.gradle` from this project.
 * Press the play button
+
+## Screenshots
+Login                                                  |  Register
+:-----------------------------------------------------:|:--------------------------------------------------------:
+![](/master/screenshots/login_screen_sm.png?raw=true)  |  ![](/master/screenshots/register_screen_sm.png?raw=true)
+
